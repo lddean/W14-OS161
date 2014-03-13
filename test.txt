@@ -1,0 +1,6 @@
+<<<<<<< HEAD
+123 chane somthign here 
+=======
+>>>>>>> e4961a73df0baa71beb49b0e9113c2c2bf1bb1f1
+\\\\\
+test it can work
