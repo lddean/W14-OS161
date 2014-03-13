@@ -1,0 +1,133 @@
+#include "opt-A3.h"
+#include <coremap.h>
+#include <types.h>
+#include <queue.h>
+#include <vm.h>
+#include <spinlock.h>
+#include <lib.h>
+
+static uint32_t num_ppages = 0;
+static int order_count = 0;
+static struct page *coremap = NULL;
+static struct spinlock cm_lock = SPINLOCK_INITIALIZER;
+
+void cm_bootstrap(){
+	spinlock_acquire(&cm_lock);
+
+	paddr_t first_addr, last_addr, first_free;
+	ram_getsize(&first_addr, &last_addr);
+
+	num_ppages = (last_addr-first_addr)/PAGE_SIZE;
+
+	coremap = (struct page *) PADDR_TO_KVADDR(first_addr);
+
+	first_free = first_addr + num_ppages * sizeof(struct page);
+
+	//first_free is you "real" physical frame
+
+	struct page target_page;
+	paddr_t pa = first_free & PAGE_FRAME;
+	for (uint32_t i = 0; i < first_free; i++){
+		target_page = coremap[i];
+		target_page.state = FIXED;
+		target_page.paddr = pa;
+		target_page.length = -1;
+		target_page.order = -1;
+		pa += PAGE_SIZE;
+	}
+	coremap[0].length = first_free;
+	for (uint32_t j = first_free; j < num_pages; j++){
+		target_page = coremap[j];
+		target_page.state = FREE;
+		target_page.paddr = pa;
+		target_page.length = -1;
+		target_page.order = -1;
+		pa += PAGE_SIZE;
+	}
+
+	spinlock_release(&cm_lock);
+}
+
+paddr_t cm_getpages(unsigned long npages){
+	kprintf("getpages\n");
+	uint32_t i;
+	uint32_t nfree;
+	int tightest_index = -1;
+	uint32_t tightest_diff = num_pages;
+	struct page cur_page;
+
+	spinlock_acquire(&cm_lock);
+	kprintf("look for best fit");
+	while(i < num_pages){
+		cur_page = coremap[i];
+		nfree = 0;
+		if (cur_page.state == FIXED || cur_page.state == DIRTY){
+			i += cur_page.length;
+			continue;
+		}
+
+		while(cur_page.state == FREE){
+			nfree++;
+			cur_page = coremap[i+nfree];
+		}
+		if(nfree == npages){
+			tightest_index = i;
+			break;
+		}
+		else if ((nfree > npages) && ((nfree-npages) < tightest_diff)){
+			tightest_index = i;
+		}
+		i += nfree;
+	}
+
+	kprintf("best fit found");
+	struct page target_page;
+	if (tightest_index >= 0){
+		for(uint32_t x = 0; x < npages; x++){
+			target_page = coremap[tightest_index + x];
+			target_page.state = DIRTY;
+			if (npages > 1){
+				target_page.state = FIXED;
+			}
+			target_page.order = order_count;
+			order_count++;
+		}
+		coremap[tightest_index].length = npages;
+	}
+	else{} //cannot get npages from coremap
+
+	spinlock_release(&cm_lock);
+	return target_page.paddr;
+}
+
+int cm_freepages(vaddr_t vaddr){
+	vaddr_t cur_vaddr;
+	struct page cur_page;
+	struct page target_page;
+	uint32_t i;
+
+	spinlock_acquire(&cm_lock);
+	while(i < num_pages){
+		cur_page = coremap[i];
+		if (cur_page.state != DIRTY){
+			i++;
+			continue;
+		}
+
+		cur_vaddr = PADDR_TO_KVADDR(coremap[i].paddr);
+		if (vaddr == cur_vaddr){
+			for(int j = 0; j < cur_page.length; j++){
+				target_page = coremap[i+j];
+				target_page.state = FREE;
+				target_page.length = -1;
+				target_page.order = -1;
+			}
+			spinlock_release(&cm_lock);
+			return 0;
+		}
+		i += cur_page.length;
+	}
+
+	spinlock_release(&cm_lock);
+	return -1;
+}
