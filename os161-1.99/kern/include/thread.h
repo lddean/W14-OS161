@@ -39,6 +39,7 @@
 #include <array.h>
 #include <spinlock.h>
 #include <threadlist.h>
+#include <syscall.h>
 
 struct cpu;
 
@@ -169,6 +170,8 @@ void schedule(void);
  * timer interrupt.
  */
 void thread_consider_migration(void);
+
+int sys_fork(struct trapframe *tf, int *return_value);
 
 
 #endif /* _THREAD_H_ */
