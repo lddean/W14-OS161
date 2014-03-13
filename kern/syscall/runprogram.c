@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
- *        The President and Fellows of Harvard College.
+ *	The President and Fellows of Harvard College.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,106 +53,126 @@
  *
  * Calls vfs_open on progname and thus may destroy it.
  */
+
+
 int
-runprogram(char *progname, char **args, unsigned long argc)
+runprogram(char *progname, char **args,unsigned long argc)
 {
-        struct addrspace *as;
-        struct vnode *v;
-        vaddr_t entrypoint, stackptr;
-        int result;
+    
+    kprintf("come to the rungrogram \n");
+	struct addrspace *as;
+	struct vnode *v;
+	vaddr_t entrypoint, stackptr;
+	int result;
 
-        /* Open the file. */
-        result = vfs_open(progname, O_RDONLY, 0, &v);
-        if (result) {
-                return result;
-        }
+	/* Open the file. */
+	result = vfs_open(progname, O_RDONLY, 0, &v);
+	if (result) {
+		return result;
+	}
 
-        /* We should be a new process. */
-        KASSERT(curproc_getas() == NULL);
+	/* We should be a new process. */
+	KASSERT(curproc_getas() == NULL);
 
-        /* Create a new address space. */
-        as = as_create();
-        if (as ==NULL) {
-                vfs_close(v);
-                return ENOMEM;
-        }
+	/* Create a new address space. */
+	as = as_create();
+	if (as ==NULL) {
+		vfs_close(v);
+		return ENOMEM;
+	}
 
-        /* Switch to it and activate it. */
-        curproc_setas(as);
-        as_activate();
+	/* Switch to it and activate it. */
+	curproc_setas(as);
+	as_activate();
 
-        /* Load the executable. */
-        result = load_elf(v, &entrypoint);
-        
-        if (result) {
-                /* p_addrspace will go away when curproc is destroyed */
-                vfs_close(v);
-                return result;
-        }
+	/* Load the executable. */
+	result = load_elf(v, &entrypoint);
+	if (result) {
+		/* p_addrspace will go away when curproc is destroyed */
+		vfs_close(v);
+		return result;
+	}
 
-        /* Done with the file now. */
-        vfs_close(v);
+	/* Done with the file now. */
+	vfs_close(v);
 
-        /* Define the user stack in the address space */
-        result = as_define_stack(as, &stackptr);
-        if (result) {
-                /* p_addrspace will go away when curproc is destroyed */
-                return result;
-        }
+	/* Define the user stack in the address space */
+	result = as_define_stack(as, &stackptr);
+	if (result) {
+		/* p_addrspace will go away when curproc is destroyed */
+		return result;
+	}
+    
+    kprintf("changing \n");
 
-	//#if OPT_A2
-/*
-        int num;
-        num = (int)argc;
+	int count;
+	count = (int) argc;
+	vaddr_t address[count + 1];
 
-        vaddr_t addr[num + 1];
+	int i = 0;
 
-        size_t length;
-        int i = 0;
+	size_t j = 0;
 
-        for (i = num - 1; i >= 0 ; i--){
+	for (i = count - 1; i >= 0; i --){
+		size_t size;
+		size = strlen(args[i]) + 1;
+		
+		j = j + size;
+	
+		if (size % 4 != 0){
 
-                length = strlen(args[i]) + 1;
-                size_t fk;
+			size = size - (size % 4) + 4;
 
-                if (length % 4 == 0){
-                        stackptr = stackptr - length;
-                }else{
-                        length = (length + 4 - (length % 4));
-                        stackptr = stackptr - length;
-                }
+			stackptr = stackptr - size;
+		}else{
+			stackptr = stackptr - size;
+		}
+		
+		result = 0;
 
-                result = copyoutstr(args[i], (userptr_t)stackptr,length,&fk);
+		result = copyoutstr(args[i],(userptr_t)stackptr,size, &size);
+		if (result){
 
-                addr[i] = stackptr;
+			return result;
+		}
 
-        }
-        addr[num] = 0;
+		address[i] = stackptr;
+	}
+	//int count1 = count;
 
-        //int shift_stack = num;
-        for (i = num ; i >= 0; i--){
-                stackptr = stackptr - 4;
-                result = copyout(&addr[i],(userptr_t)stackptr, 4);
-        }
-NULL 
-        userptr_t new_stackptr;
+	address[count] = 0;
 
-        new_stackptr = (userptr_t)stackptr;
+	for (i = count; i >= 0 ; i --){
+		int stack = 4;
+		
+		 stack = stack + 4;
 
-        if (stackptr % 8 != 0){
-                stackptr = (stackptr / 8) * 8;
-        }
-*/
-	//#else
-        /* Warp to user mode. */
-	kprintf("so far so good \n");
-        enter_new_process(0 /*argc*/,NULL/*userspace addr of argv*/,
-                          stackptr, entrypoint);
+		stackptr = stackptr - 4;
 
-        /* enter_new_process does not return. */
-	(void)args;
-	(void)argc;
-        panic("enter_new_process returned\n");
-        return EINVAL;
-	//#endif
+		result = copyout(&address[i],(userptr_t)stackptr,4);
+
+	}
+
+	vaddr_t n;
+
+	n = stackptr;
+	
+	int new_stack  = 8; //the stack must divide by 8;
+	
+	new_stack = (new_stack % 8 )* 8;
+
+	if (stackptr % 8 != 0){
+
+		stackptr = stackptr - stackptr % 8;
+
+	}
+
+	/* Warp to user mode. */
+	enter_new_process(count /*argc*/,  (userptr_t)n/*userspace addr of argv*/,
+			  stackptr, entrypoint);
+	
+	/* enter_new_process does not return. */
+	panic("enter_new_process returned\n");
+	return EINVAL;
 }
+
