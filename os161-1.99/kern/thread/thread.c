@@ -50,7 +50,7 @@
 #include <addrspace.h>
 #include <mainbus.h>
 #include <vnode.h>
-#include <pid.h>
+//#include <pid.h>
 
 #include "opt-synchprobs.h"
 
@@ -1234,7 +1234,7 @@ int sys_fork(struct trapframe *tf){
     thread_checkstack_init(newthread);
     thread_checkstack(newthread);
     
-    newthread -> t_cup = curthread -> t_cup;
+    newthread -> t_cpu = curthread -> t_cpu;
     
     struct proc *newproc;
     
@@ -1271,7 +1271,7 @@ int sys_fork(struct trapframe *tf){
     
     if (newtf == NULL){
         
-        RETURN ENOMEM;
+        return ENOMEM;
         
     }
     
@@ -1285,3 +1285,4 @@ int sys_fork(struct trapframe *tf){
     
 
 }
+

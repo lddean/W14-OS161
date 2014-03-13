@@ -45,6 +45,9 @@
 #include <syscall.h>
 #include <test.h>
 
+#include <copyinout.h>
+
+ 
 /*
  * Load program "progname" and start running it in usermode.
  * Does not return except on error.
@@ -97,15 +100,15 @@ runprogram(char *progname, char **args,unsigned long argc)
 		return result;
 	}
 
-	int num;
-	num = (int) argc;
-	vaddr_t address[num + 1];
+	int count;
+	count = (int) argc;
+	vaddr_t address[count + 1];
 
 	int i = 0;
 
-	for (i = num - 1; i >= 0; i --){
+	for (i = count - 1; i >= 0; i --){
 		size_t size;
-		size = strlen(argc[i]) + 1;
+		size = strlen(args[i]) + 1;
 
 		if (size % 4 != 0){
 
@@ -116,7 +119,7 @@ runprogram(char *progname, char **args,unsigned long argc)
 			stackptr = stackptr - size;
 		}
 
-		result = copyoutstr(argc[i]),(userptr_t)stackptr,size, &size);
+		result = copyoutstr(args[i],(userptr_t)stackptr,size, &size);
 		if (result){
 			return result;
 		}
@@ -124,9 +127,9 @@ runprogram(char *progname, char **args,unsigned long argc)
 		address[i] = stackptr;
 	}
 
-	address[num] = 0;
+	address[count] = 0;
 
-	for (i = num; i >= 0 ; i --){
+	for (i = count; i >= 0 ; i --){
 		stackptr = stackptr - 4;
 
 		result = copyout(&address[i],(userptr_t)stackptr,4);
@@ -143,11 +146,10 @@ runprogram(char *progname, char **args,unsigned long argc)
 	}
 
 	/* Warp to user mode. */
-	enter_new_process(argc /*argc*/,  (userptr_t)n/*userspace addr of argv*/,
+	enter_new_process(count /*argc*/,  (userptr_t)n/*userspace addr of argv*/,
 			  stackptr, entrypoint);
 	
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");
 	return EINVAL;
 }
-
