@@ -47,16 +47,19 @@
 
 #include <copyinout.h>
 
- 
 /*
  * Load program "progname" and start running it in usermode.
  * Does not return except on error.
  *
  * Calls vfs_open on progname and thus may destroy it.
  */
+
+
 int
 runprogram(char *progname, char **args,unsigned long argc)
 {
+    
+    kprintf("come to the rungrogram \n");
 	struct addrspace *as;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
@@ -99,6 +102,8 @@ runprogram(char *progname, char **args,unsigned long argc)
 		/* p_addrspace will go away when curproc is destroyed */
 		return result;
 	}
+    
+    kprintf("changing \n");
 
 	int count;
 	count = (int) argc;
@@ -106,10 +111,14 @@ runprogram(char *progname, char **args,unsigned long argc)
 
 	int i = 0;
 
+	size_t j = 0;
+
 	for (i = count - 1; i >= 0; i --){
 		size_t size;
 		size = strlen(args[i]) + 1;
-
+		
+		j = j + size;
+	
 		if (size % 4 != 0){
 
 			size = size - (size % 4) + 4;
@@ -118,18 +127,26 @@ runprogram(char *progname, char **args,unsigned long argc)
 		}else{
 			stackptr = stackptr - size;
 		}
+		
+		result = 0;
 
 		result = copyoutstr(args[i],(userptr_t)stackptr,size, &size);
 		if (result){
+
 			return result;
 		}
 
 		address[i] = stackptr;
 	}
+	//int count1 = count;
 
 	address[count] = 0;
 
 	for (i = count; i >= 0 ; i --){
+		int stack = 4;
+		
+		 stack = stack + 4;
+
 		stackptr = stackptr - 4;
 
 		result = copyout(&address[i],(userptr_t)stackptr,4);
@@ -139,6 +156,11 @@ runprogram(char *progname, char **args,unsigned long argc)
 	vaddr_t n;
 
 	n = stackptr;
+	
+	int new_stack  = 8; //the stack must divide by 8;
+	
+	new_stack = (new_stack % 8 )* 8;
+
 	if (stackptr % 8 != 0){
 
 		stackptr = stackptr - stackptr % 8;
@@ -153,3 +175,4 @@ runprogram(char *progname, char **args,unsigned long argc)
 	panic("enter_new_process returned\n");
 	return EINVAL;
 }
+
