@@ -35,8 +35,8 @@ void proc_table_destroy(void);
 struct procInfo* procInfo_get(pid_t pid);
 struct procInfo* procInfo_create(int curPid, int parPid);
 // add process info and return current pid
-pid_t proc_table_add(pid_t curthread);
-pid_t nullPid_create(pid_t pid);
+pid_t proc_table_add(void);
+pid_t* nullPid_create(pid_t pid);
 // remove a process and add pid to nullPids
 void proc_table_remove(pid_t pid);
 
