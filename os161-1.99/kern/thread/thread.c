@@ -152,7 +152,7 @@ thread_create(const char *name)
     
 	/* If you add to struct thread, be sure to initialize here */
 	//thread -> proc_Info = procInfo_create();
-	//thread -> pid = prco_table_add();
+	thread -> pid = prco_table_add();
     
 	return thread;
 }
@@ -517,6 +517,10 @@ thread_fork(const char *name,
 		return result;
 	}
     
+    if (newthread -> pid < 0){
+    
+        return ENOMEM;
+    }
 	/*
 	 * Because new threads come out holding the cpu runqueue lock
 	 * (see notes at bottom of thread_switch), we need to account
@@ -1280,6 +1284,16 @@ int sys_fork(struct trapframe *tf, int *return_value){
         
     }
     
+    if (newthread -> pid >= 0){
+        
+        *return_value = newthread -> pid;
+    }else{
+        
+        return_value = ENOMEM;
+        return -1;
+        
+    }
+    
     memcpy(newtf, tf, (sizeof(struct trapframe)));
     
     switchframe_init(newthread, (void *)enter_forked_process, newtf, 0);
@@ -1292,6 +1306,4 @@ int sys_fork(struct trapframe *tf, int *return_value){
     
     
 }
-
-
 
