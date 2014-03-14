@@ -1,42 +1,44 @@
-#ifndef _PID_H_
-#define _PID_H_
+#ifndef PID_H
+#define PID_H
 
 #include "opt-A2.h"
-
 #if OPT_A2
-#include <fd_table.h>
-#include <array.h>
-#include <spinlock.h>
-#include <threadlist.h>
-#include <thread.h>
-#include <proc.h>
-#include <limits.h>
 
-struct processInfo{
-	pid_t self;			//the pid corresponding to this processInfo
-	int exited; 		//if the process have exited: active = 0, exited = 1, error = -1
-	pid_t parent;		//the pid of its parent
-	pid_t *children; 	//the array that contains its children’s pid
-	int num_children;	//the number of children it has
-	int exitcode;		//the exitcode of this process
-	struct lock *plock;	//used with pcv
-	struct cv *pcv;		//the parent will be sleeping on this cv if the process have not
-						//finished yet. This process will wakeup its parent when it exits.
+#include<array.h>
+#include<proc.h>
+#include<thread.h>
+#include<lib.h>
+#include<syscall.h>
+#include<array.h>
+#include<types.h>
+
+// pid functions prototypes
+struct proc_table{
+	struct array *procInfoLst; //procInfo structures
+	int size;
+	struct array *nullPids; //pid_t
 };
 
+struct procInfo{
+	int flag; //0-inactive 1-active
+	pid_t currentPid;
+	pid_t parentPid;
+	//int exit_status;
+	//struct array *childrenPid; //list of pid_t types 
+	//int childrenSize;
+	struct lock* plock;
+	struct cv* pcv;
+};
 
-void create_proc_info_array(void);
-
-struct processInfo * procinfo_create(void);
-
-void procinfo_destroy(struct processInfo *pinfo);
-
-pid_t get_next_pid(void);
-
-pid_t add_proc_info(void);
-
-struct processInfo *get_proc_details(pid_t pid);
+struct proc_table* proc_table_create(void);
+void proc_table_destroy(void);
+struct procInfo* procInfo_get(pid_t pid);
+struct procInfo* procInfo_create(int curPid, int parPid);
+// add process info and return current pid
+pid_t proc_table_add(void);
+pid_t* nullPid_create(pid_t pid);
+// remove a process and add pid to nullPids
+void proc_table_remove(pid_t pid);
 
 #endif
-
-#endif /* _PID_H_ */
+#endif
