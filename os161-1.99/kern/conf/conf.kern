@@ -375,6 +375,9 @@ file      vfs/devnull.c
 file      syscall/loadelf.c
 file      syscall/runprogram.c
 file      syscall/time_syscalls.c
+#File table/descriptors
+file      syscall/file_table.c
+file      syscall/file_descriptor.c
 # UW additions
 file      syscall/proc_syscalls.c
 file      syscall/file_syscalls.c
@@ -386,7 +389,6 @@ file      syscall/file_syscalls.c
 file      startup/main.c
 file      startup/menu.c
 file      startup/hello.c
-
 
 ########################################
 #                                      #
