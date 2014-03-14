@@ -58,7 +58,7 @@ struct procInfo* procInfo_get(pid_t pid){
 
 struct procInfo* procInfo_create(int curPid, int parPid){
 	struct procInfo* new = malloc(sizeof(struct procInfo));
-	kassert(new!=NULL);
+	KASSERT(new!=NULL);
 	
 	new->flag = 1;
 	new->currentPid = curPid;
@@ -69,10 +69,10 @@ struct procInfo* procInfo_create(int curPid, int parPid){
 	return new;
 }
 
-pid_t proc_table_add(/*struct proc_table *pt,*/ pid_t curthread){
+pid_t proc_table_add(void){
 	if (pt->size == PID_MAX){
 		cerr << "Cannot fit more processes into proc_table" << endl;
-		return -1;
+		return 0;//error
 	}
 
 	if (pt==NULL){
@@ -82,10 +82,10 @@ pid_t proc_table_add(/*struct proc_table *pt,*/ pid_t curthread){
 
 	if (array_num(pt->nullPids)==0){
 		if (pt->size==1){
-			struct procInfo *pInfo = procInfo_create(pt->size,-1);
+			struct procInfo *pInfo = procInfo_create(pt->size, -1); //no parent
 		}	
 		else{	
-			struct procInfo *pInfo = procInfo_create(pt->size,curthread);
+			struct procInfo *pInfo = procInfo_create(pt->size, curthread->pid);
 		}	
 		array_set(pt->procInfoLst, pt->size, pInfo);
 		return pt->size;
@@ -96,9 +96,10 @@ pid_t proc_table_add(/*struct proc_table *pt,*/ pid_t curthread){
 		for(i=0; i<size; i++){
 			int flag = (array_get(pt->procInfoLst, i))->flag;
 			if (flag==0){//inactive/ is equal to null then reuse pid
-				struct procInfo *pInfo = procInfo_create(i,curthread);
+				struct procInfo *pInfo = procInfo_create(i, curthread->pid);
 				array_set(pt->procInfoLst, i, pInfo);
 				(array_get(pt->procInfoLst, i))->flag = 1;
+				array_remove(pt->nullPids, *(array_get(pt->nullPids, i)));
 				break;
 			}
 		}
@@ -106,9 +107,9 @@ pid_t proc_table_add(/*struct proc_table *pt,*/ pid_t curthread){
 	}
 }
 
-pid_t nullPid_create(pid_t pid){
+pid_t* nullPid_create(pid_t pid){
 	pid_t *new =  malloc(sizeof(pid_t));
-	kassert(new!=NULL);
+	KASSERT(new!=NULL);
 	*new = pid;
 	return new;
 }
@@ -121,8 +122,9 @@ void proc_table_remove(/*struct proc_table* pt,*/ pid_t pid){
 	}
 	(array_get(pt->procInfoLst, index))->flag = 0;
 	//array_set(pt, index, NULL);//what to do when a proc gets removed? release resource?
-	pid_t *nullPid = nullPid_create(index);
-	array_set(pt->nullPids, index, nullPid);
+	pid_t* nullPid = nullPid_create(index);
+	usigned result;
+	array_add(pt->nullPids, nullPid, &result);
 }
 
 
