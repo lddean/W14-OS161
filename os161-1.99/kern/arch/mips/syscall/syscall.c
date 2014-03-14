@@ -36,6 +36,8 @@
 #include <current.h>
 #include <syscall.h>
 
+#include "opt-A2.h"
+
 
 /*
  * System call dispatcher.
@@ -108,6 +110,26 @@ syscall(struct trapframe *tf)
 		err = sys___time((userptr_t)tf->tf_a0,
 				 (userptr_t)tf->tf_a1);
 		break;
+	#if OPT_A2
+	    case SYS_open:
+		err = sys_open((char*)tf->tf_a0, 
+			       tf->tf_a1,
+			       tf->tf_a2,
+			       &retval);
+		break;
+	
+	    case SYS_close:
+		err = sys_close(tf->tf_a0, 
+			        &retval);
+		break;
+	
+	   case SYS_read:
+	    	err = sys_read((int)tf->tf_a0,
+	   		       (userptr_t)tf->tf_a1,
+			       (int)tf->tf_a2,
+			       (int *)(&retval));
+	       break;
+	#endif
 #ifdef UW
 	case SYS_write:
 	  err = sys_write((int)tf->tf_a0,
@@ -137,7 +159,8 @@ syscall(struct trapframe *tf)
 		 * userlevel to a return value of -1 and the error
 		 * code in errno.
 		 */
-		tf->tf_v0 = err;
+		//tf->tf_v0 = err;
+		tf->tf_v0 = retval;
 		tf->tf_a3 = 1;      /* signal an error */
 	}
 	else {
@@ -170,12 +193,5 @@ syscall(struct trapframe *tf)
 void
 enter_forked_process(struct trapframe *tf)
 {
-	struct trapframe newtf;
-    
-    newtf = *tf;
-    newtf.tf_a3 = 0;
-    newtf.tf_v0 = 0;
-    newtf.tf_epc = newtf.tf_epc + 4;
-    mips_usermode(&newtf);
-    
+	(void)tf;
 }
