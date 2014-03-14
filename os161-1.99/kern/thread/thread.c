@@ -152,7 +152,10 @@ thread_create(const char *name)
     
 	/* If you add to struct thread, be sure to initialize here */
 	//thread -> proc_Info = procInfo_create();
+	#if OPT_A2
+        thread->ft = file_table_create();
 	thread -> pid = prco_table_add();
+        #endif
     
 	return thread;
 }
@@ -249,7 +252,10 @@ thread_destroy(struct thread *thread)
 	 * If you add things to struct thread, be sure to clean them up
 	 * either here or in thread_exit(). (And not both...)
 	 */
-    
+   	#if OPT_A2
+        file_table_destroy(thread->ft);
+        #endif
+
 	/* Thread subsystem fields */
 	KASSERT(thread->t_proc == NULL);
 	if (thread->t_stack != NULL) {
@@ -528,6 +534,11 @@ thread_fork(const char *name,
 	 */
 	newthread->t_iplhigh_count++;
     
+        // initiliza the file table here
+        #if OPT_A2
+        file_table_initialize(newthread->ft);
+        #endif
+
 	/* Set up the switchframe so entrypoint() gets called */
 	switchframe_init(newthread, entrypoint, data1, data2);
     

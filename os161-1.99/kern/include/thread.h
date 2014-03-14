@@ -39,7 +39,11 @@
 #include <array.h>
 #include <spinlock.h>
 #include <threadlist.h>
-#include <syscall.h>
+#include "opt-A2.h"
+#if OPT_A2
+#include <file_table.h>
+#else
+#endif
 
 struct cpu;
 
@@ -107,8 +111,10 @@ struct thread {
 	 */
 
 	/* add more here as needed */
-	 //struct procInfo *proc_Info
-	 pid_t pid;// the process ID of this thread;
+	#if OPT_A2
+	struct file_table* ft;
+	#else
+	#endif
 };
 
 /*
@@ -170,8 +176,6 @@ void schedule(void);
  * timer interrupt.
  */
 void thread_consider_migration(void);
-
-int sys_fork(struct trapframe *tf, int *return_value);
 
 
 #endif /* _THREAD_H_ */
