@@ -92,18 +92,19 @@ pid_t proc_table_add(void){
 	}
 	else{
 		int size = array_num(pt->nullPids);
-		int i;
+		int i, index;
 		for(i=0; i<size; i++){
-			int flag = (array_get(pt->procInfoLst, i))->flag;
+			index = *(array_get(pt->nullPids, i));//gives back index in procInfoLst
+			int flag = (array_get(pt->procInfoLst, index))->flag;
 			if (flag==0){//inactive/ is equal to null then reuse pid
-				struct procInfo *pInfo = procInfo_create(i, curthread->pid);
-				array_set(pt->procInfoLst, i, pInfo);
-				(array_get(pt->procInfoLst, i))->flag = 1;
-				array_remove(pt->nullPids, *(array_get(pt->nullPids, i)));
+				struct procInfo *pInfo = procInfo_create(index, curthread->pid);
+				array_set(pt->procInfoLst, index, pInfo);
+				(array_get(pt->procInfoLst, index))->flag = 1;
+				array_remove(pt->nullPids, i);
 				break;
 			}
 		}
-		return i;
+		return index;
 	}
 }
 
@@ -124,7 +125,7 @@ void proc_table_remove(/*struct proc_table* pt,*/ pid_t pid){
 	//array_set(pt, index, NULL);//what to do when a proc gets removed? release resource?
 	pid_t* nullPid = nullPid_create(index);
 	usigned result;
-	array_add(pt->nullPids, nullPid, &result);
+	array_add(pt->nullPids, nullPid, &result); //add like a list (side by side)
 }
 
 
