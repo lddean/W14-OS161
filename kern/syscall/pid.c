@@ -1,95 +1,132 @@
 #include "opt-A2.h"
-
 #if OPT_A2
+
 #include <types.h>
 #include <kern/errno.h>
+#include <kern/unistd.h>
 #include <lib.h>
-#include <pid.h>
-#include <synch.h>
-#include <limits.h>
-#include <proc.h>
+#include <syscall.h>
 #include <current.h>
-#include <fd_table.h>
-#include "opt-synchprobs.h"
+#include <proc.h>
+#include <thread.h>
+#include <addrspace.h>
+#include <pid.h>
+#include <limits.h>
 
-//pid starts from 2 although processinfo array index starts from 0.
-static int max_index = 128;
-static struct processInfo **proc_info_array = NULL;
+//global variable
+static struct proc_table* pt;
 
-void create_proc_info_array(void){
-	proc_info_array = kmalloc(sizeof (struct processInfo *) * max_index);
-}
-
-struct processInfo * procinfo_create(void){
-	struct processInfo *pinfo = kmalloc(sizeof (struct processInfo));
-
-	if (pinfo == NULL){
+struct proc_table* proc_table_create(void){
+	//struct proc_table* pt;
+	pt = kmalloc(sizeof(struct proc_table));
+	if (pt==NULL){
 		return NULL;
 	}
-
-	pinfo->self = -1;
-	pinfo->parent = -1;
-	pinfo->num_children = 0;
-	pinfo->children = NULL;
-	pinfo->exited = 0;
-	pinfo->exitcode = -1;
-	pinfo->plock = lock_create("plock");
-	pinfo->pcv = cv_create("pcv");
-
-	return pinfo;
+	pt->procInfoLst = array_create();
+	pt->size = 0;
+	pt->nullPid = array_create();
+	return pt;
 }
 
-void procinfo_destroy(struct processInfo *pinfo){
-	lock_destroy(pinfo->plock);
-	cv_destroy(pinfo->pcv);
-	kfree(pinfo->children);
-	kfree(pinfo);
+
+void proc_table_destroy(void/*struct proc_table *pt*/){
+	pt->size = 0;
+
+	struct array* pInfoLst = pt->procInfoLst;
+	
+	int size = array_num(pInfoLst);
+	for (int i=0; i<size; i++){
+		lock_destroy((array_get(pInfoLst,i))->plock);
+		cv_destroy((array_get(pInfoLst,i))->pcv);
+		kfree(array_get(pInfoLst,i));
+	}
+	//array_destroy(pInfoLst);
+
+	struct array* nullPids = pt->nullPids;
+	int size = array_num(nullPids);
+	for (int i=0; i<size; i++){
+		kfree(array_get(nullPids,i));
+	}
+	//array_destroy(nullPids);
+
+	kfree(pt);
 }
 
-pid_t get_next_pid(void){
-	for(int i = 0; i <= max_index; i++){
-		if (i == max_index){
-			if (i == PID_MAX){
-				return -1;
+struct procInfo* procInfo_get(pid_t pid){
+	return array_get(pt->procInfoLst,pid);
+}
+
+struct procInfo* procInfo_create(int curPid, int parPid){
+	struct procInfo* new = malloc(sizeof(struct procInfo));
+	KASSERT(new!=NULL);
+	
+	new->flag = 1;
+	new->currentPid = curPid;
+	new->parentPid = parPid;
+	//new->exit_status = -1;
+	new->plock = lock_create("plock");
+	new->pcv = cv_create("pcv");
+	return new;
+}
+
+pid_t proc_table_add(void){
+	if (pt->size == PID_MAX){
+		cerr << "Cannot fit more processes into proc_table" << endl;
+		return 0;//error
+	}
+
+	if (pt==NULL){
+		pt = proc_table_create();
+	}
+	pt->size+=1;
+
+	if (array_num(pt->nullPids)==0){
+		if (pt->size==1){
+			struct procInfo *pInfo = procInfo_create(pt->size, -1); //no parent
+		}	
+		else{	
+			struct procInfo *pInfo = procInfo_create(pt->size, curthread->pid);
+		}	
+		array_set(pt->procInfoLst, pt->size, pInfo);
+		return pt->size;
+	}
+	else{
+		int size = array_num(pt->nullPids);
+		int i;
+		for(i=0; i<size; i++){
+			int flag = (array_get(pt->procInfoLst, i))->flag;
+			if (flag==0){//inactive/ is equal to null then reuse pid
+				struct procInfo *pInfo = procInfo_create(i, curthread->pid);
+				array_set(pt->procInfoLst, i, pInfo);
+				(array_get(pt->procInfoLst, i))->flag = 1;
+				array_remove(pt->nullPids, *(array_get(pt->nullPids, i)));
+				break;
 			}
-			max_index = max_index * 2;
-			if (max_index > PID_MAX){
-				max_index = PID_MAX;
-			}
-			struct processInfo ** temp = kmalloc(sizeof (struct processInfo *) * max_index);
-			for (int j = 0; j < i; j++){
-				temp[j] = proc_info_array[j];
-			}
-			kfree(proc_info_array);
-			proc_info_array = temp;
-			return i + PID_MIN;
 		}
-		if (proc_info_array[i] == NULL){
-			return i + PID_MIN;
-		}
+		return i;
 	}
-	return -1;
 }
 
-pid_t add_proc_info(void){
-	bool first = false;
-	if (proc_info_array == NULL){
-		create_proc_info_array();
-		first = true;
-	}
-	pid_t npid = get_next_pid();
-	struct processInfo * npinfo = procinfo_create();
-	npinfo->self = npid;
-	if (!first){
-		npinfo->parent = sys_getpid();
-	}
-	proc_info_array[npid - PID_MIN] = npinfo;
-	return npid;
+pid_t* nullPid_create(pid_t pid){
+	pid_t *new =  malloc(sizeof(pid_t));
+	KASSERT(new!=NULL);
+	*new = pid;
+	return new;
 }
 
-struct processInfo *get_proc_details(pid_t pid){
-	return proc_info_array[pid - PID_MIN];
+void proc_table_remove(/*struct proc_table* pt,*/ pid_t pid){
+	unsigned int index;
+	index = (unsigned int)pid;	
+	if (array_get(pt,index)==NULL){//out of bound
+		return;
+	}
+	(array_get(pt->procInfoLst, index))->flag = 0;
+	//array_set(pt, index, NULL);//what to do when a proc gets removed? release resource?
+	pid_t* nullPid = nullPid_create(index);
+	usigned result;
+	array_add(pt->nullPids, nullPid, &result);
 }
 
 
+#else
 #endif
