@@ -42,6 +42,7 @@
 #include "opt-A2.h"
 #if OPT_A2
 #include <file_table.h>
+#include <mips/trapframe.h>
 #else
 #endif
 
@@ -113,6 +114,8 @@ struct thread {
 	/* add more here as needed */
 	#if OPT_A2
 	struct file_table* ft;
+	pid_t pid;
+	int exit_status;
 	#else
 	#endif
 };
@@ -176,6 +179,8 @@ void schedule(void);
  * timer interrupt.
  */
 void thread_consider_migration(void);
+
+int sys_fork(struct trapframe *tf, int *return_value);
 
 
 #endif /* _THREAD_H_ */

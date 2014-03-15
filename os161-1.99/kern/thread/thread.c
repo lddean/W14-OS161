@@ -50,7 +50,8 @@
 #include <addrspace.h>
 #include <mainbus.h>
 #include <vnode.h>
-//#include <pid.h>
+#include <pid.h>
+#include <mips/trapframe.h>
 
 #include "opt-synchprobs.h"
 
@@ -154,7 +155,8 @@ thread_create(const char *name)
 	//thread -> proc_Info = procInfo_create();
 	#if OPT_A2
         thread->ft = file_table_create();
-	thread -> pid = prco_table_add();
+	//thread -> pid = proc_table_add();
+	thread -> exit_status = 0;
         #endif
     
 	return thread;
@@ -1260,7 +1262,7 @@ int sys_fork(struct trapframe *tf, int *return_value){
     if (newproc == NULL){
         
         *return_value = ENOMEM;
-        RETURN -1;
+        return -1;
         
     }
     
@@ -1269,7 +1271,7 @@ int sys_fork(struct trapframe *tf, int *return_value){
     if (result){
         
         *return_value = ENOMEM;
-        RETURN -1;
+        return -1;
     }
     
     newproc -> p_cwd = curthread -> t_proc -> p_cwd;
@@ -1280,7 +1282,7 @@ int sys_fork(struct trapframe *tf, int *return_value){
         
         thread_destroy(newthread);
         *return_value = ENOMEM;
-        return -1
+        return -1;
         
     }
     
@@ -1300,7 +1302,7 @@ int sys_fork(struct trapframe *tf, int *return_value){
         *return_value = newthread -> pid;
     }else{
         
-        return_value = ENOMEM;
+        *return_value = ENOMEM;
         return -1;
         
     }

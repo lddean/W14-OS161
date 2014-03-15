@@ -376,6 +376,7 @@ file      syscall/loadelf.c
 file      syscall/runprogram.c
 file      syscall/time_syscalls.c
 #File table/descriptors
+file      syscall/pid.c
 file      syscall/file_table.c
 file      syscall/file_descriptor.c
 # UW additions
