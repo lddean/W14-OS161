@@ -12,6 +12,8 @@ struct file_descriptor* file_dst_create(struct vnode* vn, int fl, off_t off){
 	fd->vnode = vn;
 	fd->flag = fl;
 	fd->offset = off;
+	fd->wlock = lock_create("write");
+	fd->rlock = lock_create("read");
 	return fd;
 }
 
@@ -22,5 +24,7 @@ void file_dst_destroy(struct file_descriptor* dst){
 		kfree(dst->vnode);
 	}
 	*/
+	lock_destroy(dst->wlock);
+	lock_destroy(dst->rlock);
 	kfree(dst);
 }
