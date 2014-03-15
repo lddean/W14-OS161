@@ -29,28 +29,31 @@ void sys_exit(int exitcode){
 	}
 	thread_exit();
 }
-int sys_waitpid(pid_t pid, int* status, int options){
+int sys_waitpid(pid_t pid, int* status, int options, int *retval){
 	//Error checking
 	//invalid option
 	if (options!=0){
-		return EINVAL;
+		*retval = EINVAL;
+		return -1;
 	}	
 
 	struct procInfo* pInfo = procInfo_get(pid); //update pid's exitcode into status
 
 	//non-existent process -> out of pt bound or inactive
 	if (pInfo==NULL || pInfo->active==0){
-		return ESRCH;
+		*retval = ESRCH;
+		return -1;
 	}	
 	//not child process -> current process must be parent process
 	if (pInfo->parentPid != sys_getpid()){
-		return ECHILD;
+		*retval = ECHILD;
+		return -1;
 	}
 	//error with status ptr 
 	if (status==NULL || 
-		(int)status%4!=0 ||
-		copyin((const->userptr_t)statu,dst,sizeof(int *))) {
-		return EFAULT;
+		(int)status%4!=0) {
+		*retval = EFAULT;
+		return -1;
 	}
 
 	lock_acquire(pInfo->plock);
@@ -61,7 +64,8 @@ int sys_waitpid(pid_t pid, int* status, int options){
 		*status = pInfo->exitcode;
 		lock_release(pInfo->plock);
 	}	 	
-	return pid;
+	*retval = pid;
+	return 0;
 	 
 
 }
