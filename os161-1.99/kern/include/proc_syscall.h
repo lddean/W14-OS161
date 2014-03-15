@@ -8,7 +8,7 @@
 
 pid_t sys_getpid(void);
 void sys_exit(int existcode);
-int sys_waitpid(pid_t pid, int* stats, int options);
+int sys_waitpid(pid_t pid, int* status, int options, int *retval);
 
 #endif
 #endif
