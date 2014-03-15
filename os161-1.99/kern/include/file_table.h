@@ -12,6 +12,7 @@
 #include <kern/fcntl.h>
 #include <kern/limits.h>
 #include <file_descriptor.h>
+#include <synch.h>
 
 struct file_table{
 	struct array* fds; // files descriptors
