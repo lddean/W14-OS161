@@ -18,22 +18,50 @@ pid_t sys_getpid(void){
 	return curthread->pid;
 }
 void sys_exit(int exitcode){
-	curthread->exit_status = exitcode;
+	struct procInfo* pInfo = procInfo_get(sys_getpid());
+	
+	if (pInfo!=NULL || pInfo->active!=0){
+		pInfo->active = 0;
+		pInfo->exitcode = exitcode;
+		lock_acquire(pInfo->plock);
+		cv_signal(pInfo->pcv, pInfo->plock);
+		lock_release(pInfo->plock);
+	}
 	thread_exit();
 }
-int sys_waitpid(pid_t pid, int* stats, int options){
-	if (options!=0){ //invalid option
+int sys_waitpid(pid_t pid, int* status, int options){
+	//Error checking
+	//invalid option
+	if (options!=0){
 		return EINVAL;
-	}
-	
-	/*struct procInfo* pInfo = kmalloc(sizeof(struct procInfo));
-	pInfo = procInfo_get(pid);
+	}	
+
+	struct procInfo* pInfo = procInfo_get(pid); //update pid's exitcode into status
+
+	//non-existent process -> out of pt bound or inactive
+	if (pInfo==NULL || pInfo->active==0){
+		return ESRCH;
+	}	
+	//not child process -> current process must be parent process
 	if (pInfo->parentPid != sys_getpid()){
 		return ECHILD;
-	} */
-	*stats = 1;
-	pid = 1;
-	return 0;
+	}
+	//error with status ptr 
+	if (status==NULL || 
+		(int)status%4!=0 ||
+		copyin((const->userptr_t)statu,dst,sizeof(int *))) {
+		return EFAULT;
+	}
+
+	lock_acquire(pInfo->plock);
+	while (pInfo->active){
+		cv_wait(pInfo->pcv,pInfo->plock);
+	}
+	if (pInfo->active==0){
+		*status = pInfo->exitcode;
+		lock_release(pInfo->plock);
+	}	 	
+	return pid;
 	 
 
 }
