@@ -33,8 +33,9 @@ int DEADBEEF = 0xdeadbeef; // the user space, give error
 
 // file open
 int sys_open(const char *filename, int flags, int mode, int *retval){
+	// this flag is not supported
 	if(flags & O_APPEND){
-		*retval = EAGAIN;
+		*retval = EINVAL;
 		return -1;
 	}
 
