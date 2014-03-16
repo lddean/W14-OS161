@@ -1,5 +1,0 @@
-#!/bin/csh -f
-
-# Works
-sys161 kernel "p testbin/palin;q"
-

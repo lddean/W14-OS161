@@ -1,6 +1,0 @@
-#!/bin/csh -f
-
-# Needed support in kill_curthread to kill faulting thread
-# Works
-sys161 kernel "p testbin/faulter;q"
-

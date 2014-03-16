@@ -1,6 +1,0 @@
-#!/bin/csh -f
-
-# Needs argc/argv
-echo "abcdefg" > hashfile
-sys161 kernel "p testbin/hash hashfile;q"
-
