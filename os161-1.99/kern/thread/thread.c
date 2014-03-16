@@ -50,8 +50,6 @@
 #include <addrspace.h>
 #include <mainbus.h>
 #include <vnode.h>
-#include <pid.h>
-#include <mips/trapframe.h>
 
 #include "opt-synchprobs.h"
 
@@ -122,14 +120,14 @@ struct thread *
 thread_create(const char *name)
 {
 	struct thread *thread;
-    
+
 	DEBUGASSERT(name != NULL);
-    
+
 	thread = kmalloc(sizeof(*thread));
 	if (thread == NULL) {
 		return NULL;
 	}
-    
+
 	thread->t_name = kstrdup(name);
 	if (thread->t_name == NULL) {
 		kfree(thread);
@@ -137,7 +135,7 @@ thread_create(const char *name)
 	}
 	thread->t_wchan_name = "NEW";
 	thread->t_state = S_READY;
-    
+
 	/* Thread subsystem fields */
 	thread_machdep_init(&thread->t_machdep);
 	threadlistnode_init(&thread->t_listnode, thread);
@@ -145,20 +143,17 @@ thread_create(const char *name)
 	thread->t_context = NULL;
 	thread->t_cpu = NULL;
 	thread->t_proc = NULL;
-    
+
 	/* Interrupt state fields */
 	thread->t_in_interrupt = false;
 	thread->t_curspl = IPL_HIGH;
 	thread->t_iplhigh_count = 1; /* corresponding to t_curspl */
-    
+
 	/* If you add to struct thread, be sure to initialize here */
-	//thread -> proc_Info = procInfo_create();
 	#if OPT_A2
-        thread->ft = file_table_create();
-	//thread -> pid = proc_table_add();
-	thread -> exit_status = 0;
-        #endif
-    
+	thread->ft = file_table_create();	
+	#endif
+
 	return thread;
 }
 
@@ -176,7 +171,7 @@ cpu_create(unsigned hardware_number)
 	struct cpu *c;
 	int result;
 	char namebuf[16];
-    
+
 	c = kmalloc(sizeof(*c));
 	if (c == NULL) {
 		panic("cpu_create: Out of memory\n");
@@ -184,24 +179,24 @@ cpu_create(unsigned hardware_number)
 	
 	c->c_self = c;
 	c->c_hardware_number = hardware_number;
-    
+
 	c->c_curthread = NULL;
 	threadlist_init(&c->c_zombies);
 	c->c_hardclocks = 0;
-    
+
 	c->c_isidle = false;
 	threadlist_init(&c->c_runqueue);
 	spinlock_init(&c->c_runqueue_lock);
-    
+
 	c->c_ipi_pending = 0;
 	c->c_numshootdown = 0;
 	spinlock_init(&c->c_ipi_lock);
-    
+
 	result = cpuarray_add(&allcpus, c, &c->c_number);
 	if (result != 0) {
 		panic("cpu_create: array_add: %s\n", strerror(result));
 	}
-    
+
 	snprintf(namebuf, sizeof(namebuf), "<boot #%d>", c->c_number);
 	c->c_curthread = thread_create(namebuf);
 	if (c->c_curthread == NULL) {
@@ -211,7 +206,7 @@ cpu_create(unsigned hardware_number)
 	if (result) {
 		panic("cpu_create: proc_addthread:: %s\n", strerror(result));
 	}
-    
+
 	if (c->c_number == 0) {
 		/*
 		 * Leave c->c_curthread->t_stack NULL for the boot
@@ -229,9 +224,9 @@ cpu_create(unsigned hardware_number)
 		thread_checkstack_init(c->c_curthread);
 	}
 	c->c_curthread->t_cpu = c;
-    
+
 	cpu_machdep_init(c);
-    
+
 	return c;
 }
 
@@ -249,13 +244,13 @@ thread_destroy(struct thread *thread)
 {
 	KASSERT(thread != curthread);
 	KASSERT(thread->t_state != S_RUN);
-    
+
 	/*
 	 * If you add things to struct thread, be sure to clean them up
 	 * either here or in thread_exit(). (And not both...)
 	 */
-   	#if OPT_A2
-        file_table_destroy(thread->ft);
+	#if OPT_A2
+	file_table_destroy(thread->ft);	
         #endif
 
 	/* Thread subsystem fields */
@@ -265,12 +260,14 @@ thread_destroy(struct thread *thread)
 	}
 	threadlistnode_cleanup(&thread->t_listnode);
 	thread_machdep_cleanup(&thread->t_machdep);
-    
+
 	/* sheer paranoia */
 	thread->t_wchan_name = "DESTROYED";
-    
+
 	kfree(thread->t_name);
 	kfree(thread);
+
+
 }
 
 /*
@@ -284,7 +281,7 @@ void
 exorcise(void)
 {
 	struct thread *z;
-    
+
 	while ((z = threadlist_remhead(&curcpu->c_zombies)) != NULL) {
 		KASSERT(z != curthread);
 		KASSERT(z->t_state == S_ZOMBIE);
@@ -306,7 +303,7 @@ thread_panic(void)
 	 * We could wait for them to stop, except that they might not.
 	 */
 	ipi_broadcast(IPI_PANIC);
-    
+
 	/*
 	 * Drop runnable threads on the floor.
 	 *
@@ -317,7 +314,7 @@ thread_panic(void)
 	curcpu->c_runqueue.tl_count = 0;
 	curcpu->c_runqueue.tl_head.tln_next = NULL;
 	curcpu->c_runqueue.tl_tail.tln_prev = NULL;
-    
+
 	/*
 	 * Ideally, we want to make sure sleeping threads don't wake
 	 * up and start running. However, there's no good way to track
@@ -359,9 +356,9 @@ thread_bootstrap(void)
 {
 	struct cpu *bootcpu;
 	struct thread *bootthread;
-    
+
 	cpuarray_init(&allcpus);
-    
+
 	/*
 	 * Create the cpu structure for the bootup CPU, the one we're
 	 * currently running on. Assume the hardware number is 0; that
@@ -372,14 +369,14 @@ thread_bootstrap(void)
 	 */
 	bootcpu = cpu_create(0);
 	bootthread = bootcpu->c_curthread;
-    
+
 	/*
 	 * Initializing curcpu and curthread is machine-dependent
 	 * because either of curcpu and curthread might be defined in
 	 * terms of the other.
 	 */
 	INIT_CURCPU(bootcpu, bootthread);
-    
+
 	/*
 	 * Now make sure both t_cpu and c_curthread are set. This
 	 * might be partially redundant with INIT_CURCPU depending on
@@ -387,10 +384,10 @@ thread_bootstrap(void)
 	 */
 	curthread->t_cpu = curcpu;
 	curcpu->c_curthread = curthread;
-    
+
 	/* cpu_create() should have set t_proc. */
 	KASSERT(curthread->t_proc != NULL);
-    
+
 	/* Done */
 }
 
@@ -408,11 +405,11 @@ cpu_hatch(unsigned software_number)
 	KASSERT(curcpu != NULL);
 	KASSERT(curthread != NULL);
 	KASSERT(curcpu->c_number == software_number);
-    
+
 	spl0();
-    
+
 	kprintf("cpu%u: %s\n", software_number, cpu_identify());
-    
+
 	V(cpu_startup_sem);
 	thread_exit();
 }
@@ -424,9 +421,9 @@ void
 thread_start_cpus(void)
 {
 	unsigned i;
-    
+
 	kprintf("cpu0: %s\n", cpu_identify());
-    
+
 	cpu_startup_sem = sem_create("cpu_hatch", 0);
 	mainbus_start_cpus();
 	
@@ -440,7 +437,7 @@ thread_start_cpus(void)
 /*
  * Make a thread runnable.
  *
- * targetcpu might be curcpu; it might not be, too.
+ * targetcpu might be curcpu; it might not be, too. 
  */
 static
 void
@@ -448,10 +445,10 @@ thread_make_runnable(struct thread *target, bool already_have_lock)
 {
 	struct cpu *targetcpu;
 	bool isidle;
-    
+
 	/* Lock the run queue of the target thread's cpu. */
 	targetcpu = target->t_cpu;
-    
+
 	if (already_have_lock) {
 		/* The target thread's cpu should be already locked. */
 		KASSERT(spinlock_do_i_hold(&targetcpu->c_runqueue_lock));
@@ -459,7 +456,7 @@ thread_make_runnable(struct thread *target, bool already_have_lock)
 	else {
 		spinlock_acquire(&targetcpu->c_runqueue_lock);
 	}
-    
+
 	isidle = targetcpu->c_isidle;
 	threadlist_addtail(&targetcpu->c_runqueue, target);
 	if (isidle) {
@@ -469,7 +466,7 @@ thread_make_runnable(struct thread *target, bool already_have_lock)
 		 */
 		ipi_send(targetcpu, IPI_UNIDLE);
 	}
-    
+
 	if (!already_have_lock) {
 		spinlock_release(&targetcpu->c_runqueue_lock);
 	}
@@ -487,18 +484,18 @@ thread_make_runnable(struct thread *target, bool already_have_lock)
  */
 int
 thread_fork(const char *name,
-            struct proc *proc,
-            void (*entrypoint)(void *data1, unsigned long data2),
-            void *data1, unsigned long data2)
+	    struct proc *proc,
+	    void (*entrypoint)(void *data1, unsigned long data2),
+	    void *data1, unsigned long data2)
 {
 	struct thread *newthread;
 	int result;
-    
+
 	newthread = thread_create(name);
 	if (newthread == NULL) {
 		return ENOMEM;
 	}
-    
+
 	/* Allocate a stack */
 	newthread->t_stack = kmalloc(STACK_SIZE);
 	if (newthread->t_stack == NULL) {
@@ -506,14 +503,14 @@ thread_fork(const char *name,
 		return ENOMEM;
 	}
 	thread_checkstack_init(newthread);
-    
+
 	/*
 	 * Now we clone various fields from the parent thread.
 	 */
-    
+
 	/* Thread subsystem fields */
 	newthread->t_cpu = curthread->t_cpu;
-    
+
 	/* Attach the new thread to its process */
 	if (proc == NULL) {
 		proc = curthread->t_proc;
@@ -524,29 +521,25 @@ thread_fork(const char *name,
 		thread_destroy(newthread);
 		return result;
 	}
-    
-    if (newthread -> pid < 0){
-    
-        return ENOMEM;
-    }
+
 	/*
 	 * Because new threads come out holding the cpu runqueue lock
 	 * (see notes at bottom of thread_switch), we need to account
 	 * for the spllower() that will be done releasing it.
 	 */
 	newthread->t_iplhigh_count++;
-    
-        // initiliza the file table here
-        #if OPT_A2
-        file_table_initialize(newthread->ft);
-        #endif
+
+	// initiliza the file table here
+	#if OPT_A2
+	file_table_initialize(newthread->ft);
+	#endif
 
 	/* Set up the switchframe so entrypoint() gets called */
 	switchframe_init(newthread, entrypoint, data1, data2);
-    
+
 	/* Lock the current cpu's run queue and make the new thread runnable */
 	thread_make_runnable(newthread, false);
-    
+
 	return 0;
 }
 
@@ -565,15 +558,15 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
 {
 	struct thread *cur, *next;
 	int spl;
-    
+
 	DEBUGASSERT(curcpu->c_curthread == curthread);
 	DEBUGASSERT(curthread->t_cpu == curcpu->c_self);
-    
+
 	/* Explicitly disable interrupts on this processor */
 	spl = splhigh();
-    
+
 	cur = curthread;
-    
+
 	/*
 	 * If we're idle, return without doing anything. This happens
 	 * when the timer interrupt interrupts the idle loop.
@@ -582,52 +575,52 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
 		splx(spl);
 		return;
 	}
-    
+
 	/* Check the stack guard band. */
 	thread_checkstack(cur);
-    
+
 	/* Lock the run queue. */
 	spinlock_acquire(&curcpu->c_runqueue_lock);
-    
+
 	/* Micro-optimization: if nothing to do, just return */
 	if (newstate == S_READY && threadlist_isempty(&curcpu->c_runqueue)) {
 		spinlock_release(&curcpu->c_runqueue_lock);
 		splx(spl);
 		return;
 	}
-    
+
 	/* Put the thread in the right place. */
 	switch (newstate) {
 	    case S_RUN:
-            panic("Illegal S_RUN in thread_switch\n");
+		panic("Illegal S_RUN in thread_switch\n");
 	    case S_READY:
-            thread_make_runnable(cur, true /*have lock*/);
-            break;
+		thread_make_runnable(cur, true /*have lock*/);
+		break;
 	    case S_SLEEP:
-            cur->t_wchan_name = wc->wc_name;
-            /*
-             * Add the thread to the list in the wait channel, and
-             * unlock same. To avoid a race with someone else
-             * calling wchan_wake*, we must keep the wchan locked
-             * from the point the caller of wchan_sleep locked it
-             * until the thread is on the list.
-             *
-             * (We could for symmetry relock the channel before
-             * returning from wchan_sleep, but we don't, for two
-             * reasons. One is that the caller is unlikely to need
-             * or want it locked and if it does can lock it itself
-             * without racing. Exercise: what's the other?)
-             */
-            threadlist_addtail(&wc->wc_threads, cur);
-            wchan_unlock(wc);
-            break;
+		cur->t_wchan_name = wc->wc_name;
+		/*
+		 * Add the thread to the list in the wait channel, and
+		 * unlock same. To avoid a race with someone else
+		 * calling wchan_wake*, we must keep the wchan locked
+		 * from the point the caller of wchan_sleep locked it
+		 * until the thread is on the list.
+		 *
+		 * (We could for symmetry relock the channel before
+		 * returning from wchan_sleep, but we don't, for two
+		 * reasons. One is that the caller is unlikely to need
+		 * or want it locked and if it does can lock it itself
+		 * without racing. Exercise: what's the other?)
+		 */
+		threadlist_addtail(&wc->wc_threads, cur);
+		wchan_unlock(wc);
+		break;
 	    case S_ZOMBIE:
-            cur->t_wchan_name = "ZOMBIE";
-            threadlist_addtail(&curcpu->c_zombies, cur);
-            break;
+		cur->t_wchan_name = "ZOMBIE";
+		threadlist_addtail(&curcpu->c_zombies, cur);
+		break;
 	}
 	cur->t_state = newstate;
-    
+
 	/*
 	 * Get the next thread. While there isn't one, call md_idle().
 	 * curcpu->c_isidle must be true when md_idle is
@@ -644,7 +637,7 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
 	 * idle. However, because one is supposed to hold the runqueue
 	 * lock to look at it, this should not be visible or matter.
 	 */
-    
+
 	/* The current cpu is now idle. */
 	curcpu->c_isidle = true;
 	do {
@@ -656,7 +649,7 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
 		}
 	} while (next == NULL);
 	curcpu->c_isidle = false;
-    
+
 	/*
 	 * Note that curcpu->c_curthread may be the same variable as
 	 * curthread and it may not be, depending on how curthread and
@@ -666,10 +659,10 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
 	 */
 	curcpu->c_curthread = next;
 	curthread = next;
-    
+
 	/* do the switch (in assembler in switch.S) */
 	switchframe_switch(&cur->t_context, &next->t_context);
-    
+
 	/*
 	 * When we get to this point we are either running in the next
 	 * thread, or have come back to the same thread again,
@@ -715,21 +708,21 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
 	 * skippable on some switches or also called from
 	 * thread_startup.
 	 */
-    
-    
+
+
 	/* Clear the wait channel and set the thread state. */
 	cur->t_wchan_name = NULL;
 	cur->t_state = S_RUN;
-    
+
 	/* Unlock the run queue. */
 	spinlock_release(&curcpu->c_runqueue_lock);
-    
+
 	/* Activate our address space in the MMU. */
 	as_activate();
-    
+
 	/* Clean up dead threads. */
 	exorcise();
-    
+
 	/* Turn interrupts back on. */
 	splx(spl);
 }
@@ -744,28 +737,28 @@ thread_switch(threadstate_t newstate, struct wchan *wc)
  */
 void
 thread_startup(void (*entrypoint)(void *data1, unsigned long data2),
-               void *data1, unsigned long data2)
+	       void *data1, unsigned long data2)
 {
 	struct thread *cur;
-    
+
 	cur = curthread;
-    
+
 	/* Clear the wait channel and set the thread state. */
 	cur->t_wchan_name = NULL;
 	cur->t_state = S_RUN;
-    
+
 	/* Release the runqueue lock acquired in thread_switch. */
 	spinlock_release(&curcpu->c_runqueue_lock);
-    
+
 	/* Activate our address space in the MMU. */
 	as_activate();
-    
+
 	/* Clean up dead threads. */
 	exorcise();
-    
+
 	/* Enable interrupts. */
 	spl0();
-    
+
 #if OPT_SYNCHPROBS
 	/* Yield a random number of times to get a good mix of threads. */
 	{
@@ -776,10 +769,10 @@ thread_startup(void (*entrypoint)(void *data1, unsigned long data2),
 		}
 	}
 #endif
-    
+
 	/* Call the function. */
 	entrypoint(data1, data2);
-    
+
 	/* Done. */
 	thread_exit();
 }
@@ -797,29 +790,31 @@ void
 thread_exit(void)
 {
 	struct thread *cur;
-    
+
 	cur = curthread;
-    
+
 #ifdef UW
 	/* threads for user processes should have detached from their process
-     in sys__exit */
-	KASSERT(curproc == kproc || curproc == NULL);
+	   in sys__exit */
+	KASSERT(curproc == kproc);
+	KASSERT(curproc == NULL);	
+	KASSERT(curproc == kproc || curproc == NULL);	
 	/* kernel threads don't go through sys__exit, so we detach them from kproc here */
 	if (curproc == kproc) {
-        proc_remthread(cur);
+	  proc_remthread(cur);
 	}
 #else // UW
 	proc_remthread(cur);
 #endif // UW
-    
+
 	/* Make sure we *are* detached (move this only if you're sure!) */
 	KASSERT(cur->t_proc == NULL);
-    
+
 	/* Check the stack guard band. */
 	thread_checkstack(cur);
-    
+
 	/* Interrupts off on this processor */
-    splhigh();
+        splhigh();
 	thread_switch(S_ZOMBIE, NULL);
 	panic("The zombie walks!\n");
 }
@@ -876,7 +871,7 @@ thread_consider_migration(void)
 	struct cpu *c;
 	struct threadlist victims;
 	struct thread *t;
-    
+
 	my_count = total_count = 0;
 	numcpus = cpuarray_num(&allcpus);
 	for (i=0; i<numcpus; i++) {
@@ -888,12 +883,12 @@ thread_consider_migration(void)
 		}
 		spinlock_release(&c->c_runqueue_lock);
 	}
-    
+
 	one_share = DIVROUNDUP(total_count, numcpus);
 	if (my_count < one_share) {
 		return;
 	}
-    
+
 	to_send = my_count - one_share;
 	threadlist_init(&victims);
 	spinlock_acquire(&curcpu->c_runqueue_lock);
@@ -902,7 +897,7 @@ thread_consider_migration(void)
 		threadlist_addhead(&victims, t);
 	}
 	spinlock_release(&curcpu->c_runqueue_lock);
-    
+
 	for (i=0; i < numcpus && to_send > 0; i++) {
 		c = cpuarray_get(&allcpus, i);
 		if (c == curcpu->c_self) {
@@ -938,7 +933,7 @@ thread_consider_migration(void)
 				to_send--;
 				continue;
 			}
-            
+
 			t->t_cpu = c;
 			threadlist_addtail(&c->c_runqueue, t);
 			DEBUG(DB_THREADS,
@@ -955,7 +950,7 @@ thread_consider_migration(void)
 		}
 		spinlock_release(&c->c_runqueue_lock);
 	}
-    
+
 	/*
 	 * Because the code above isn't atomic, the thread counts may have
 	 * changed while we were working and we may end up with leftovers.
@@ -968,7 +963,7 @@ thread_consider_migration(void)
 		}
 		spinlock_release(&curcpu->c_runqueue_lock);
 	}
-    
+
 	KASSERT(threadlist_isempty(&victims));
 	threadlist_cleanup(&victims);
 }
@@ -991,7 +986,7 @@ struct wchan *
 wchan_create(const char *name)
 {
 	struct wchan *wc;
-    
+
 	wc = kmalloc(sizeof(*wc));
 	if (wc == NULL) {
 		return NULL;
@@ -1040,7 +1035,7 @@ wchan_sleep(struct wchan *wc)
 {
 	/* may not sleep in an interrupt handler */
 	KASSERT(!curthread->t_in_interrupt);
-    
+
 	thread_switch(S_SLEEP, wc);
 }
 
@@ -1051,7 +1046,7 @@ void
 wchan_wakeone(struct wchan *wc)
 {
 	struct thread *target;
-    
+
 	/* Lock the channel and grab a thread from it */
 	spinlock_acquire(&wc->wc_lock);
 	target = threadlist_remhead(&wc->wc_threads);
@@ -1060,12 +1055,12 @@ wchan_wakeone(struct wchan *wc)
 	 * to hang onto the lock.
 	 */
 	spinlock_release(&wc->wc_lock);
-    
+
 	if (target == NULL) {
 		/* Nobody was sleeping. */
 		return;
 	}
-    
+
 	thread_make_runnable(target, false);
 }
 
@@ -1077,9 +1072,9 @@ wchan_wakeall(struct wchan *wc)
 {
 	struct thread *target;
 	struct threadlist list;
-    
+
 	threadlist_init(&list);
-    
+
 	/*
 	 * Lock the channel and grab all the threads, moving them to a
 	 * private list.
@@ -1093,7 +1088,7 @@ wchan_wakeall(struct wchan *wc)
 	 * to hang onto the lock.
 	 */
 	spinlock_release(&wc->wc_lock);
-    
+
 	/*
 	 * We could conceivably sort by cpu first to cause fewer lock
 	 * ops and fewer IPIs, but for now at least don't bother. Just
@@ -1102,7 +1097,7 @@ wchan_wakeall(struct wchan *wc)
 	while ((target = threadlist_remhead(&list)) != NULL) {
 		thread_make_runnable(target, false);
 	}
-    
+
 	threadlist_cleanup(&list);
 }
 
@@ -1114,11 +1109,11 @@ bool
 wchan_isempty(struct wchan *wc)
 {
 	bool ret;
-    
+
 	spinlock_acquire(&wc->wc_lock);
 	ret = threadlist_isempty(&wc->wc_threads);
 	spinlock_release(&wc->wc_lock);
-    
+
 	return ret;
 }
 
@@ -1135,7 +1130,7 @@ void
 ipi_send(struct cpu *target, int code)
 {
 	KASSERT(code >= 0 && code < 32);
-    
+
 	spinlock_acquire(&target->c_ipi_lock);
 	target->c_ipi_pending |= (uint32_t)1 << code;
 	mainbus_send_ipi(target);
@@ -1147,7 +1142,7 @@ ipi_broadcast(int code)
 {
 	unsigned i;
 	struct cpu *c;
-    
+
 	for (i=0; i < cpuarray_num(&allcpus); i++) {
 		c = cpuarray_get(&allcpus, i);
 		if (c != curcpu->c_self) {
@@ -1160,9 +1155,9 @@ void
 ipi_tlbshootdown(struct cpu *target, const struct tlbshootdown *mapping)
 {
 	int n;
-    
+
 	spinlock_acquire(&target->c_ipi_lock);
-    
+
 	n = target->c_numshootdown;
 	if (n == TLBSHOOTDOWN_MAX) {
 		target->c_numshootdown = TLBSHOOTDOWN_ALL;
@@ -1171,10 +1166,10 @@ ipi_tlbshootdown(struct cpu *target, const struct tlbshootdown *mapping)
 		target->c_shootdown[n] = *mapping;
 		target->c_numshootdown = n+1;
 	}
-    
+
 	target->c_ipi_pending |= (uint32_t)1 << IPI_TLBSHOOTDOWN;
 	mainbus_send_ipi(target);
-    
+
 	spinlock_release(&target->c_ipi_lock);
 }
 
@@ -1183,10 +1178,10 @@ interprocessor_interrupt(void)
 {
 	uint32_t bits;
 	int i;
-    
+
 	spinlock_acquire(&curcpu->c_ipi_lock);
 	bits = curcpu->c_ipi_pending;
-    
+
 	if (bits & (1U << IPI_PANIC)) {
 		/* panic on another cpu - just stop dead */
 		cpu_halt();
@@ -1196,7 +1191,7 @@ interprocessor_interrupt(void)
 		spinlock_acquire(&curcpu->c_runqueue_lock);
 		if (!curcpu->c_isidle) {
 			kprintf("cpu%d: offline: warning: not idle\n",
-                    curcpu->c_number);
+				curcpu->c_number);
 		}
 		spinlock_release(&curcpu->c_runqueue_lock);
 		kprintf("cpu%d: offline.\n", curcpu->c_number);
@@ -1219,10 +1214,11 @@ interprocessor_interrupt(void)
 		}
 		curcpu->c_numshootdown = 0;
 	}
-    
+
 	curcpu->c_ipi_pending = 0;
 	spinlock_release(&curcpu->c_ipi_lock);
 }
+
 
 int sys_fork(struct trapframe *tf, int *return_value){
     
@@ -1238,11 +1234,18 @@ int sys_fork(struct trapframe *tf, int *return_value){
         
     }
     
+    newthread -> ft = file_table_duplicate(curthread -> ft);
+    
+    if (newthread -> ft == NULL){
+        *return_value = ENOMEM;
+        return -1;
+    }
+    
     newthread -> t_stack = kmalloc(STACK_SIZE);
     
     if (newthread -> t_stack == NULL){
         
-        thread_destroy(newthread);
+        //thread_destroy(newthread);
         *return_value = ENOMEM;
         return -1;
         
@@ -1280,7 +1283,7 @@ int sys_fork(struct trapframe *tf, int *return_value){
     
     if (result){
         
-        thread_destroy(newthread);
+        //thread_destroy(newthread);
         *return_value = ENOMEM;
         return -1;
         
@@ -1313,10 +1316,11 @@ int sys_fork(struct trapframe *tf, int *return_value){
     
     thread_make_runnable(newthread, false);
     
-    kfree(newtf);
+   // kfree(newtf);
     
     return 0;
     
     
 }
+
 
