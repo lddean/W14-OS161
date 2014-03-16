@@ -16,14 +16,14 @@
 struct proc_table{
 	struct array *procInfoLst; //procInfo structures
 	int size;
-	struct array *nullPids; //pid_t
+	//struct array *nullPids; //pid_t
 };
 
 struct procInfo{
-	int flag; //0-inactive 1-active
+	int active; //0-inactive 1-active
 	pid_t currentPid;
 	pid_t parentPid;
-	//int exit_status;
+	int exitcode;
 	//struct array *childrenPid; //list of pid_t types 
 	//int childrenSize;
 	struct lock* plock;
@@ -36,9 +36,9 @@ struct procInfo* procInfo_get(pid_t pid);
 struct procInfo* procInfo_create(int curPid, int parPid);
 // add process info and return current pid
 pid_t proc_table_add(void);
-pid_t *nullPid_create(pid_t pid);
+//pid_t* nullPid_create(pid_t pid);
 // remove a process and add pid to nullPids
-void proc_table_remove(pid_t pid);
+//void proc_table_remove(pid_t pid);
 
 #endif
 #endif

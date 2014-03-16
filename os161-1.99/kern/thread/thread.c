@@ -50,6 +50,8 @@
 #include <addrspace.h>
 #include <mainbus.h>
 #include <vnode.h>
+//added
+#include <pid.h>
 
 #include "opt-synchprobs.h"
 
@@ -151,7 +153,9 @@ thread_create(const char *name)
 
 	/* If you add to struct thread, be sure to initialize here */
 	#if OPT_A2
-	thread->ft = file_table_create();	
+	thread->ft = file_table_create();
+	//thread->pid = proc_table_add();	
+	//kprintf("adding to pt: pt size is %d\n", thread->pid);
 	#endif
 
 	return thread;
@@ -1216,6 +1220,7 @@ interprocessor_interrupt(void)
 	curcpu->c_ipi_pending = 0;
 	spinlock_release(&curcpu->c_ipi_lock);
 }
+
 
 int sys_fork(struct trapframe *tf, int *return_value){
     
