@@ -59,7 +59,6 @@ int
 runprogram(char *progname, char **args,unsigned long argc)
 {
     
-    kprintf("come to the rungrogram \n");
 	struct addrspace *as;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
@@ -103,8 +102,6 @@ runprogram(char *progname, char **args,unsigned long argc)
 		return result;
 	}
     
-    kprintf("changing \n");
-
 	int count;
 	count = (int) argc;
 	vaddr_t address[count + 1];
