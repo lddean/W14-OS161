@@ -13,6 +13,7 @@
 #include <addrspace.h>
 #include <limits.h>
 #include <proc_syscalls.h>
+#include <kern/wait.h>
 
 #include <copyinout.h>
 
@@ -22,7 +23,6 @@ pid_t sys_getpid(void){
 void sys_exit(int exitcode){
 	struct procInfo* pInfo = procInfo_get(sys_getpid());
 	
-//kprintf("exit sys set 0000\n");
 	if (pInfo!=NULL && pInfo->active!=0){
 		pInfo->active = 0;
 		pInfo->exitcode = exitcode;
@@ -64,7 +64,6 @@ void sys_exit(int exitcode){
 int sys_waitpid(pid_t pid, int* status, int options, int *retval){
 	//Error checking
 	//invalid option
-//kprintf("11 case\n");
 	if (options!=0){
 		*retval = EINVAL;
 		return -1;
@@ -72,19 +71,16 @@ int sys_waitpid(pid_t pid, int* status, int options, int *retval){
 
 	struct procInfo* pInfo = procInfo_get(pid); //update pid's exitcode into status
 
-//kprintf("22 case\n");
 	//non-existent process -> out of pt bound or inactive
 	if (pInfo==NULL){ //|| pInfo->active==0){
 		*retval = ESRCH;
 		return -1;
 	}	
-//kprintf("33 case\n");
 	//not child process -> current process must be parent process
 	if (pInfo->parentPid != sys_getpid()){
 		*retval = ECHILD;
 		return -1;
 	}
-//kprintf("44 case\n");
 	//error with status ptr 
 	if (status==NULL || 
 		(int)status%4!=0) {
@@ -97,7 +93,7 @@ int sys_waitpid(pid_t pid, int* status, int options, int *retval){
 		cv_wait(pInfo->pcv,pInfo->plock);
 	}
 	if (pInfo->active==0){
-		*status = pInfo->exitcode;
+		*status = _MKWAIT_EXIT(pInfo->exitcode);
 		lock_release(pInfo->plock);
 	}	 	
 	*retval = pid;
@@ -186,13 +182,14 @@ sys_execv(const char *progname, char **args, int *rv)
         return -1;
         
     }
+
     
     if ((unsigned int)args == 0x80000000 || (unsigned int)args == 0x40000000){
         *rv = EFAULT;
         return -1;
     }
+
     
-    //kprintf("come to the rungrogram \n");
 	struct addrspace *as;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
@@ -227,7 +224,6 @@ sys_execv(const char *progname, char **args, int *rv)
         count_args = count_args + 1;
     }
     
-    //kprintf("run at here1\n");
     
     char *name;
     
@@ -241,6 +237,11 @@ sys_execv(const char *progname, char **args, int *rv)
         return -1;
     }
     
+    /*if (strcmp(progname, "")){
+	*rv = EINVAL;
+	return -1;
+    }*/
+
     result = copyinstr((userptr_t)progname, name, PATH_MAX,size_of_args);
     
     if (result){
@@ -251,8 +252,8 @@ sys_execv(const char *progname, char **args, int *rv)
     }
     
     if (strlen(name) == 0){
-        
-        *rv = EFAULT;
+        //*rv = EFAULT;
+        *rv = EINVAL;
         return -1;
     }
     
@@ -323,8 +324,6 @@ sys_execv(const char *progname, char **args, int *rv)
 		return -1;
 	}
     
-    // kprintf("changing \n");
-    
 	int count;
 	count = (int) count_args;
 	vaddr_t address[count + 1];
@@ -365,7 +364,6 @@ sys_execv(const char *progname, char **args, int *rv)
 	}
 	//int count1 = count;
     
-    // kprintf("run at hereeeee\n");
 	address[count] = 0;
     
 	for (i = count; i >= 0 ; i --){
@@ -403,7 +401,6 @@ sys_execv(const char *progname, char **args, int *rv)
                       stackptr, entrypoint);
 	
 	/* enter_new_process does not return. */
-	//kprintf("asdfasdfaf\n");
 	panic("enter_new_process returned\n");
     *rv = EINVAL;
 	return -1;

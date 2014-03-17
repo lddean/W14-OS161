@@ -50,6 +50,10 @@
 #include <unistd.h>
 #include <err.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
 static volatile int pid;
 
 int

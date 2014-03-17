@@ -110,17 +110,19 @@ struct file_table* file_table_duplicate(struct file_table* src_ft){
 	for(int i=0; i<size; i++){
 		struct file_descriptor* dst_fd = kmalloc(sizeof(struct file_descriptor));
 		struct file_descriptor* src_fd = array_get(src_fds, i);
+		if(dst_fd != NULL){
 		// copy all fields and increase vnode count
-		dst_fd->vnode = src_fd->vnode;
-		dst_fd->flag = src_fd->flag;
-		dst_fd->offset = src_fd->offset;
-		dst_fd->wlock = src_fd->wlock;
-		dst_fd->rlock = src_fd->rlock;
-		vnode_incref(dst_fd->vnode);
+			dst_fd->vnode = src_fd->vnode;
+			dst_fd->flag = src_fd->flag;
+			dst_fd->offset = src_fd->offset;
+			dst_fd->wlock = src_fd->wlock;
+			dst_fd->rlock = src_fd->rlock;
+			vnode_incref(dst_fd->vnode);
 		
-		unsigned result;
-		dst_ft->size++;
-		array_add(dst_fds, dst_fd, &result);
+			unsigned result;
+			dst_ft->size++;
+			array_add(dst_fds, dst_fd, &result);
+		}
 	}
 	return dst_ft;
 }

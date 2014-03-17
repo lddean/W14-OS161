@@ -155,7 +155,6 @@ thread_create(const char *name)
 	#if OPT_A2
 	thread->ft = file_table_create();
 	thread->pid = proc_table_add();	
-	//kprintf("adding to pt: pt size is %d\n", thread->pid);
 	#endif
 
 	return thread;
@@ -349,6 +348,9 @@ thread_shutdown(void)
 	 * We should probably wait for them to stop and shut them off
 	 * on the system board.
 	 */
+	#if OPT_A2
+		proc_table_destroy();
+	#endif
 	ipi_broadcast(IPI_OFFLINE);
 }
 
@@ -1235,14 +1237,12 @@ int sys_fork(struct trapframe *tf, int *return_value){
         return -1;
         
     }
-    
     newthread -> ft = file_table_duplicate(curthread -> ft);
     
     if (newthread -> ft == NULL){
         *return_value = ENOMEM;
         return -1;
     }
-    
     newthread -> t_stack = kmalloc(STACK_SIZE);
     
     if (newthread -> t_stack == NULL){
@@ -1261,7 +1261,6 @@ int sys_fork(struct trapframe *tf, int *return_value){
     newthread -> t_cpu = curthread -> t_cpu;
     
     struct proc *newproc;
-    
     newproc = proc_create_runprogram(curthread -> t_proc -> p_name);
     
     if (newproc == NULL){
@@ -1290,9 +1289,7 @@ int sys_fork(struct trapframe *tf, int *return_value){
         return -1;
         
     }
-    
     newthread -> t_iplhigh_count ++;
-    
     struct trapframe *newtf = kmalloc(sizeof(struct trapframe));
     
     if (newtf == NULL){
@@ -1317,7 +1314,6 @@ int sys_fork(struct trapframe *tf, int *return_value){
     switchframe_init(newthread, (void *)enter_forked_process, newtf, 0);
     
     thread_make_runnable(newthread, false);
-    
    // kfree(newtf);
     
     return 0;

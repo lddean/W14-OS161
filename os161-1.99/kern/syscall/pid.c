@@ -57,7 +57,6 @@ void proc_table_destroy(void/*struct proc_table *pt*/){
 struct procInfo* procInfo_get(pid_t pid){
 	//struct procInfo* tmp = procInfo_create(1,1);
 	//return tmp;
-	//kprintf("pid is %d and size is %d\n", pid, pt->size);
 	if (pt ==NULL || pid > pt->size || pid < -1){
 		return NULL;
 	}
@@ -68,7 +67,10 @@ struct procInfo* procInfo_get(pid_t pid){
 
 struct procInfo* procInfo_create(pid_t curPid, pid_t parPid){
 	struct procInfo* new = kmalloc(sizeof(struct procInfo));
-	KASSERT(new!=NULL);
+	//KASSERT(new!=NULL);
+	
+        //if kmalloc fails
+        if(new == NULL){return NULL;}
 	
 	new->active = 1;
 	new->currentPid = curPid;
@@ -80,62 +82,45 @@ struct procInfo* procInfo_create(pid_t curPid, pid_t parPid){
 }
 
 pid_t proc_table_add(void){
-	//kprintf("test0\n");
 
 	if (pt!=NULL && pt->size == PID_MAX){
 		//cerr << "Cannot fit more processes into proc_table" << endl;
 		return -1;//error
 	}
-	//kprintf("test1\n");
-	//kprintf("pt in beg: %d", pt->size);
 	if (pt==NULL){
 		pt = proc_table_create();
 		kprintf("Create pt->size %d\n", pt->size); 
 	}
-	//kprintf("beg: pt->size is %d %d\n",pt->size,array_num(pt->procInfoLst));
 	
 	struct procInfo *pInfo_new; 
-	//struct procInfo *pInfo_reuse; 
+	struct procInfo *pInfo_reuse; 
 	
-	//kprintf("test2\n");
 	unsigned result;
 
 	if (pt->size==-1){
 		pInfo_new = procInfo_create(0, -1); //no parent
 		array_add(pt->procInfoLst, pInfo_new, &result);
-		kprintf("tom's pt->size and array size is %d %d\n",pt->size, array_num(pt->procInfoLst));
 		pt->size++;
 		return pt->size;
 	}
-	//else (pt->size>0)
-	//kprintf("test3\n");
-kprintf("ENTER FOR inex , pt size %d and size %d\n",  pt->size, array_num(pt->procInfoLst));
-	/*for (int index=0; index <= pt->size; index++){
-	//for (int index=0; index < (int)array_num(pt->procInfoLst); index++){
-		//kprintf("pt->size is %d %d\n",pt->size,array_num(pt->procInfoLst));
-		//kprintf("index is %d\n", index);
-		
-	//kprintf("in FOR inex %d, pt size %d and size %d\n", index, pt->size, array_num(pt->procInfoLst));
-		struct procInfo *pInfo = array_get(pt->procInfoLst, index);
-		int active = pInfo->active;
-		//kprintf("active flag is %d\n",active);
 
-	//kprintf("33\n");
+	for (int index=0; index < pt->size; index++){
+	int active;
+	struct procInfo *pInfo;	
+		if(pt->procInfoLst != NULL && index<(int)array_num(pt->procInfoLst)){
+			pInfo = array_get(pt->procInfoLst, index);
+		if(pInfo != NULL){
+			active = pInfo->active;
+		}
+		}
+
 		if (active==0){
 			pInfo_reuse = procInfo_create(index, curthread->pid);
-kprintf("44\n");
 			array_set(pt->procInfoLst, index, pInfo_reuse);	 	
-			//pInfo->active = 1;
-
-			//pt->size-=1;
-
-			//kprintf("index is %d\n",index);
+			pInfo->active = 1;
 			return index; //current Pid
 		}
-	}*/
-	//kprintf("AFTER FOR inex , pt size %d and size %d\n",  pt->size, array_num(pt->procInfoLst));
-
-	//kprintf("test4\n");
+	}
 	
 	pt->size += 1;
 	pInfo_new = procInfo_create(pt->size, curthread->pid);
