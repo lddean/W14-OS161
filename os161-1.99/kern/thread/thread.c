@@ -154,7 +154,7 @@ thread_create(const char *name)
 	/* If you add to struct thread, be sure to initialize here */
 	#if OPT_A2
 	thread->ft = file_table_create();
-	//thread->pid = proc_table_add();	
+	thread->pid = proc_table_add();	
 	//kprintf("adding to pt: pt size is %d\n", thread->pid);
 	#endif
 

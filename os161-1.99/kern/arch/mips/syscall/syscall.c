@@ -130,14 +130,21 @@ syscall(struct trapframe *tf)
 			       (int *)(&retval));
 	       break;
 
-		case SYS_fork:
+	   case SYS_fork:
 		err = sys_fork((void *)tf,&retval);
-		break;
+	   break;
 
-
-		case SYS_getpid:
+	   case SYS_getpid:
 		err = sys_getpid();
-		break;
+	   break;
+
+	   case SYS_waitpid:
+		err = sys_waitpid(tf->tf_a0,(int *)tf->tf_a1,(int)tf->tf_a2,&retval);
+	   break;
+
+	   case SYS_execv:
+		sys_execv((const char *)tf->tf_a0,(char **)tf->tf_a1,&retval);
+	   break;
 	#endif
 #ifdef UW
 	case SYS_write:

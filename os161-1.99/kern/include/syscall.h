@@ -68,11 +68,11 @@ pid_t sys_getpid(void);
 void sys_exit(int existcode);
 int sys_waitpid(pid_t pid, int* stats, int options, int *return_value);
 
+int sys_execv(const char *progname, char **args, int *rv);
 #endif
 #ifdef UW
 // file system 
 int sys_write(int fdesc,userptr_t ubuf,unsigned int nbytes,int *retval);
-int sys_execv(const char *progname, char **args, int *rv);
 void sys__exit(int exitcode);
 #endif // UW
 
