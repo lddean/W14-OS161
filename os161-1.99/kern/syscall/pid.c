@@ -57,7 +57,8 @@ void proc_table_destroy(void/*struct proc_table *pt*/){
 struct procInfo* procInfo_get(pid_t pid){
 	//struct procInfo* tmp = procInfo_create(1,1);
 	//return tmp;
-	if (pt ==NULL || pid > pt->size || pid < 0){
+	//kprintf("pid is %d and size is %d\n", pid, pt->size);
+	if (pt ==NULL || pid > pt->size || pid < -1){
 		return NULL;
 	}
 	else{
@@ -119,7 +120,7 @@ pid_t proc_table_add(void){
 		if (active==0){
 			pInfo_reuse = procInfo_create(index, curthread->pid);
 			array_set(pt->procInfoLst, index, pInfo_reuse);	 	
-			pInfo->active = 1;
+			//pInfo->active = 1;
 			pt->size-=1;
 			//kprintf("index is %d\n",index);
 			return index; //current Pid

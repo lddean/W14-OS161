@@ -22,6 +22,7 @@ pid_t sys_getpid(void){
 void sys_exit(int exitcode){
 	struct procInfo* pInfo = procInfo_get(sys_getpid());
 	
+//kprintf("exit sys set 0000\n");
 	if (pInfo!=NULL && pInfo->active!=0){
 		pInfo->active = 0;
 		pInfo->exitcode = exitcode;
@@ -63,6 +64,7 @@ void sys_exit(int exitcode){
 int sys_waitpid(pid_t pid, int* status, int options, int *retval){
 	//Error checking
 	//invalid option
+//kprintf("11 case\n");
 	if (options!=0){
 		*retval = EINVAL;
 		return -1;
@@ -70,16 +72,19 @@ int sys_waitpid(pid_t pid, int* status, int options, int *retval){
 
 	struct procInfo* pInfo = procInfo_get(pid); //update pid's exitcode into status
 
+//kprintf("22 case\n");
 	//non-existent process -> out of pt bound or inactive
-	if (pInfo==NULL || pInfo->active==0){
+	if (pInfo==NULL){ //|| pInfo->active==0){
 		*retval = ESRCH;
 		return -1;
 	}	
+//kprintf("33 case\n");
 	//not child process -> current process must be parent process
 	if (pInfo->parentPid != sys_getpid()){
 		*retval = ECHILD;
 		return -1;
 	}
+//kprintf("44 case\n");
 	//error with status ptr 
 	if (status==NULL || 
 		(int)status%4!=0) {
