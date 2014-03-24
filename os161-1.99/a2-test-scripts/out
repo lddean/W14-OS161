@@ -1,0 +1,1165 @@
+RUNNING ./run-batch : Version 0.4
+---------------------------------------------------------------
+RUNNING test-files TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p uw-testbin/files1
+TEST STATS for files1.c : from function = main, line = 80
+    Number of failures = 0    Number of successes = 15   Number of Tests = 15
+
+Operation took 0.194397240 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 9897858 cycles (7033528 run, 2864330 global-idle)
+sys161:   cpu0: 6850001 kern, 14071 user, 169456 idle)
+sys161:   cpu1: 237616 kern, 0 user, 6795912 idle)
+sys161:   cpu2: 239795 kern, 0 user, 6793733 idle)
+sys161:   cpu3: 239082 kern, 0 user, 6794446 idle)
+sys161: 1569 irqs 203 exns 0r/0w disk 0r/896w console 11r/4w/9m emufs 0r/0w net
+sys161: Elapsed real time: 0.587036 seconds (16.8607 mhz)
+sys161: Elapsed virtual time: 0.395914320 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p uw-testbin/files2
+Number of files opened = 61
+TEST STATS for files2.c : from function = main, line = 174
+    Number of failures = 0    Number of successes = 92   Number of Tests = 92
+
+Operation took 0.978304297 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 29496303 cycles (10867709 run, 18628594 global-idle)
+sys161:   cpu0: 10674681 kern, 23124 user, 169904 idle)
+sys161:   cpu1: 238049 kern, 0 user, 10629660 idle)
+sys161:   cpu2: 240228 kern, 0 user, 10627481 idle)
+sys161:   cpu3: 239515 kern, 0 user, 10628194 idle)
+sys161: 1868 irqs 753 exns 0r/0w disk 0r/926w console 9r/2w/137m emufs 0r/0w net
+sys161: Elapsed real time: 1.228935 seconds (24.0015 mhz)
+sys161: Elapsed virtual time: 1.179852137 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p uw-testbin/writeread
+TEST STATS for writeread.c : from function = main, line = 54
+    Number of failures = 0    Number of successes = 4100   Number of Tests = 4100
+
+Operation took 0.174983720 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 9433264 cycles (7441881 run, 1991383 global-idle)
+sys161:   cpu0: 7048662 kern, 223608 user, 169611 idle)
+sys161:   cpu1: 237754 kern, 0 user, 7204127 idle)
+sys161:   cpu2: 239933 kern, 0 user, 7201948 idle)
+sys161:   cpu3: 239220 kern, 0 user, 7202661 idle)
+sys161: 1569 irqs 202 exns 0r/0w disk 0r/906w console 10r/1w/6m emufs 0r/0w net
+sys161: Elapsed real time: 0.600904 seconds (15.6985 mhz)
+sys161: Elapsed virtual time: 0.377330560 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-read-file TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/hash hashfile
+Hash : 13995
+Operation took 0.145772600 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 8706766 cycles (5967963 run, 2738803 global-idle)
+sys161:   cpu0: 5921395 kern, 2671 user, 43897 idle)
+sys161:   cpu1: 237479 kern, 0 user, 5730484 idle)
+sys161:   cpu2: 239658 kern, 0 user, 5728305 idle)
+sys161:   cpu3: 238945 kern, 0 user, 5729018 idle)
+sys161: 1441 irqs 56 exns 0r/0w disk 0r/774w console 18r/0w/5m emufs 0r/0w net
+sys161: Elapsed real time: 0.678293 seconds (12.8363 mhz)
+sys161: Elapsed virtual time: 0.348270640 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-write-file TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/bigfile bigfile.out 100
+Warning: argument passing from menu not supported
+Creating a file of size 100
+Operation took 0.177414920 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 9563425 cycles (6575597 run, 2987828 global-idle)
+sys161:   cpu0: 6388354 kern, 18136 user, 169107 idle)
+sys161:   cpu1: 237253 kern, 0 user, 6338344 idle)
+sys161:   cpu2: 239432 kern, 0 user, 6336165 idle)
+sys161:   cpu3: 238719 kern, 0 user, 6336878 idle)
+sys161: 1581 irqs 95 exns 0r/0w disk 0r/849w console 9r/11w/5m emufs 0r/0w net
+sys161: Elapsed real time: 0.497437 seconds (19.2254 mhz)
+sys161: Elapsed virtual time: 0.382537000 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/bigfile bigfile.out 10240
+Warning: argument passing from menu not supported
+Creating a file of size 10240
+Operation took 6.090076937 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 157396638 cycles (27250878 run, 130145760 global-idle)
+sys161:   cpu0: 25109740 kern, 1971795 user, 169343 idle)
+sys161:   cpu1: 237475 kern, 0 user, 27013403 idle)
+sys161:   cpu2: 239654 kern, 0 user, 27011224 idle)
+sys161:   cpu3: 238941 kern, 0 user, 27011937 idle)
+sys161: 3705 irqs 5167 exns 0r/0w disk 0r/853w console 9r/1025w/5m emufs 0r/0w net
+sys161: Elapsed real time: 6.321025 seconds (24.9005 mhz)
+sys161: Elapsed virtual time: 6.295865537 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-args TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/argtest 2 4
+Warning: argument passing from menu not supported
+argc: 3
+argv[0]: testbin/argtest
+argv[1]: 2
+argv[2]: 4
+argv[3]: [NULL]
+Operation took 0.116393600 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7962350 cycles (6593294 run, 1369056 global-idle)
+sys161:   cpu0: 6414685 kern, 8865 user, 169744 idle)
+sys161:   cpu1: 237885 kern, 0 user, 6355409 idle)
+sys161:   cpu2: 240064 kern, 0 user, 6353230 idle)
+sys161:   cpu3: 239351 kern, 0 user, 6353943 idle)
+sys161: 1584 irqs 94 exns 0r/0w disk 0r/884w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.565562 seconds (14.0787 mhz)
+sys161: Elapsed virtual time: 0.318494000 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/argtest one two three four five
+Warning: argument passing from menu not supported
+argc: 6
+argv[0]: testbin/argtest
+argv[1]: one
+argv[2]: two
+argv[3]: three
+argv[4]: four
+argv[5]: five
+argv[6]: [NULL]
+Operation took 0.132898960 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 8512216 cycles (7142925 run, 1369291 global-idle)
+sys161:   cpu0: 6959327 kern, 14603 user, 168995 idle)
+sys161:   cpu1: 237144 kern, 0 user, 6905781 idle)
+sys161:   cpu2: 239323 kern, 0 user, 6903602 idle)
+sys161:   cpu3: 238610 kern, 0 user, 6904315 idle)
+sys161: 1678 irqs 150 exns 0r/0w disk 0r/954w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.461298 seconds (18.4527 mhz)
+sys161: Elapsed virtual time: 0.340488640 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/add 2 4
+Warning: argument passing from menu not supported
+Answer: 6
+Operation took 0.096556560 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7438429 cycles (6067812 run, 1370617 global-idle)
+sys161:   cpu0: 5896246 kern, 1505 user, 170061 idle)
+sys161:   cpu1: 238194 kern, 0 user, 5829618 idle)
+sys161:   cpu2: 240373 kern, 0 user, 5827439 idle)
+sys161:   cpu3: 239660 kern, 0 user, 5828152 idle)
+sys161: 1505 irqs 22 exns 0r/0w disk 0r/815w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.513648 seconds (14.4816 mhz)
+sys161: Elapsed virtual time: 0.297537160 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/add 4 4
+Warning: argument passing from menu not supported
+Answer: 8
+Operation took 0.096451800 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7435436 cycles (6067452 run, 1367984 global-idle)
+sys161:   cpu0: 5896247 kern, 1519 user, 169686 idle)
+sys161:   cpu1: 237836 kern, 0 user, 5829616 idle)
+sys161:   cpu2: 240015 kern, 0 user, 5827437 idle)
+sys161:   cpu3: 239302 kern, 0 user, 5828150 idle)
+sys161: 1505 irqs 22 exns 0r/0w disk 0r/815w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.394095 seconds (18.8671 mhz)
+sys161: Elapsed virtual time: 0.297417440 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/add 10000 20000
+Warning: argument passing from menu not supported
+Answer: 30000
+Operation took 0.097740720 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7521895 cycles (6150915 run, 1370980 global-idle)
+sys161:   cpu0: 5979180 kern, 2732 user, 169003 idle)
+sys161:   cpu1: 237141 kern, 0 user, 5913774 idle)
+sys161:   cpu2: 239320 kern, 0 user, 5911595 idle)
+sys161:   cpu3: 238607 kern, 0 user, 5912308 idle)
+sys161: 1524 irqs 26 exns 0r/0w disk 0r/827w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.397191 seconds (18.9377 mhz)
+sys161: Elapsed virtual time: 0.300875800 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-execv TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/farm
+Hello farmer
+
+Operation took 0.462706600 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 16592796 cycles (12284003 run, 4308793 global-idle)
+sys161:   cpu0: 10554836 kern, 900644 user, 828523 idle)
+sys161:   cpu1: 690789 kern, 450048 user, 11143166 idle)
+sys161:   cpu2: 239438 kern, 0 user, 12044565 idle)
+sys161:   cpu3: 238725 kern, 0 user, 12045278 idle)
+sys161: 1525 irqs 98 exns 0r/0w disk 0r/767w console 45r/0w/13m emufs 0r/0w net
+sys161: Elapsed real time: 0.936514 seconds (17.7176 mhz)
+sys161: Elapsed virtual time: 0.663711840 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/farm
+Hello farmer
+
+Operation took 0.462840120 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 16597007 cycles (12284737 run, 4312270 global-idle)
+sys161:   cpu0: 10554833 kern, 900644 user, 829260 idle)
+sys161:   cpu1: 691657 kern, 450048 user, 11143032 idle)
+sys161:   cpu2: 240306 kern, 0 user, 12044431 idle)
+sys161:   cpu3: 239593 kern, 0 user, 12045144 idle)
+sys161: 1525 irqs 98 exns 0r/0w disk 0r/767w console 45r/0w/13m emufs 0r/0w net
+sys161: Elapsed real time: 0.783788 seconds (21.1754 mhz)
+sys161: Elapsed virtual time: 0.663880280 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/farm
+Hello farmer
+
+Operation took 0.462681280 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 16593062 cycles (12284628 run, 4308434 global-idle)
+sys161:   cpu0: 10554834 kern, 900643 user, 829151 idle)
+sys161:   cpu1: 691669 kern, 450048 user, 11142911 idle)
+sys161:   cpu2: 240318 kern, 0 user, 12044310 idle)
+sys161:   cpu3: 239605 kern, 0 user, 12045023 idle)
+sys161: 1525 irqs 98 exns 0r/0w disk 0r/767w console 45r/0w/13m emufs 0r/0w net
+sys161: Elapsed real time: 0.785637 seconds (21.1205 mhz)
+sys161: Elapsed virtual time: 0.663722480 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-fork TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/forktest
+testbin/forktest: Starting.
+001111222222233332333333333333
+testbin/forktest: Complete.
+Operation took 0.735113960 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 23499918 cycles (22131031 run, 1368887 global-idle)
+sys161:   cpu0: 21527552 kern, 299499 user, 303980 idle)
+sys161:   cpu1: 7902759 kern, 148189 user, 14080083 idle)
+sys161:   cpu2: 4819140 kern, 80440 user, 17231451 idle)
+sys161:   cpu3: 397921 kern, 4635 user, 21728475 idle)
+sys161: 1628 irqs 24428 exns 0r/0w disk 0r/845w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 1.873228 seconds (12.5451 mhz)
+sys161: Elapsed virtual time: 0.939996720 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/forktest
+testbin/forktest: Starting.
+001111222222233332333333333333
+testbin/forktest: Complete.
+Operation took 0.735139000 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 23499965 cycles (22130456 run, 1369509 global-idle)
+sys161:   cpu0: 21527553 kern, 299498 user, 303405 idle)
+sys161:   cpu1: 7902190 kern, 148189 user, 14080077 idle)
+sys161:   cpu2: 4818574 kern, 80440 user, 17231442 idle)
+sys161:   cpu3: 397355 kern, 4635 user, 21728466 idle)
+sys161: 1628 irqs 24428 exns 0r/0w disk 0r/845w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 1.821090 seconds (12.9043 mhz)
+sys161: Elapsed virtual time: 0.939998600 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/forktest
+testbin/forktest: Starting.
+001111222222233332333333333333
+testbin/forktest: Complete.
+Operation took 0.735117640 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 23499397 cycles (22130418 run, 1368979 global-idle)
+sys161:   cpu0: 21527551 kern, 299499 user, 303368 idle)
+sys161:   cpu1: 7902143 kern, 148189 user, 14080086 idle)
+sys161:   cpu2: 4818524 kern, 80440 user, 17231454 idle)
+sys161:   cpu3: 397305 kern, 4635 user, 21728478 idle)
+sys161: 1628 irqs 24428 exns 0r/0w disk 0r/845w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 1.807731 seconds (12.9994 mhz)
+sys161: Elapsed virtual time: 0.939975880 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/forktest
+testbin/forktest: Starting.
+001111222222233332333333333333
+testbin/forktest: Complete.
+Operation took 0.735153520 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 23500566 cycles (22130685 run, 1369881 global-idle)
+sys161:   cpu0: 21527552 kern, 299498 user, 303635 idle)
+sys161:   cpu1: 7902423 kern, 148189 user, 14080073 idle)
+sys161:   cpu2: 4818807 kern, 80440 user, 17231438 idle)
+sys161:   cpu3: 397588 kern, 4635 user, 21728462 idle)
+sys161: 1628 irqs 24428 exns 0r/0w disk 0r/845w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 1.804024 seconds (13.0267 mhz)
+sys161: Elapsed virtual time: 0.940022640 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-_exit TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/hog
+Operation took 0.087562920 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7185585 cycles (5939979 run, 1245606 global-idle)
+sys161:   cpu0: 5320165 kern, 450030 user, 169784 idle)
+sys161:   cpu1: 237912 kern, 0 user, 5702067 idle)
+sys161:   cpu2: 240091 kern, 0 user, 5699888 idle)
+sys161:   cpu3: 239378 kern, 0 user, 5700601 idle)
+sys161: 1383 irqs 5 exns 0r/0w disk 0r/750w console 8r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.387256 seconds (18.5551 mhz)
+sys161: Elapsed virtual time: 0.287423400 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-waitpid TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/sty
+Operation took 0.606178800 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 20188401 cycles (15862591 run, 4325810 global-idle)
+sys161:   cpu0: 12384599 kern, 1800671 user, 1677321 idle)
+sys161:   cpu1: 1172951 kern, 900082 user, 13789558 idle)
+sys161:   cpu2: 240204 kern, 0 user, 15622387 idle)
+sys161:   cpu3: 239491 kern, 0 user, 15623100 idle)
+sys161: 1552 irqs 115 exns 0r/0w disk 0r/750w console 57r/0w/15m emufs 0r/0w net
+sys161: Elapsed real time: 1.168395 seconds (17.2787 mhz)
+sys161: Elapsed virtual time: 0.807536040 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/sty
+Operation took 0.606427120 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 20194590 cycles (15862570 run, 4332020 global-idle)
+sys161:   cpu0: 12384597 kern, 1800670 user, 1677303 idle)
+sys161:   cpu1: 1172928 kern, 900082 user, 13789560 idle)
+sys161:   cpu2: 240181 kern, 0 user, 15622389 idle)
+sys161:   cpu3: 239468 kern, 0 user, 15623102 idle)
+sys161: 1552 irqs 115 exns 0r/0w disk 0r/750w console 57r/0w/15m emufs 0r/0w net
+sys161: Elapsed real time: 1.011894 seconds (19.9572 mhz)
+sys161: Elapsed virtual time: 0.807783600 seconds (25 mhz)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/sty
+Operation took 0.606251360 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 20189704 cycles (15862081 run, 4327623 global-idle)
+sys161:   cpu0: 12384600 kern, 1800671 user, 1676810 idle)
+sys161:   cpu1: 1172431 kern, 900082 user, 13789568 idle)
+sys161:   cpu2: 239684 kern, 0 user, 15622397 idle)
+sys161:   cpu3: 238971 kern, 0 user, 15623110 idle)
+sys161: 1552 irqs 115 exns 0r/0w disk 0r/750w console 57r/0w/15m emufs 0r/0w net
+sys161: Elapsed real time: 1.014442 seconds (19.9023 mhz)
+sys161: Elapsed virtual time: 0.807588160 seconds (25 mhz)
+
+---------------------------------------------------------------
+RUNNING test-exceptions TESTS
+
+running crash running crash with option = a
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash a
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x400050, vaddr 0x0)
+Operation took 0.104344920 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7630415 cycles (6263508 run, 1366907 global-idle)
+sys161:   cpu0: 6093954 kern, 39 user, 169515 idle)
+sys161:   cpu1: 237659 kern, 0 user, 6025849 idle)
+sys161:   cpu2: 239838 kern, 0 user, 6023670 idle)
+sys161:   cpu3: 239125 kern, 0 user, 6024383 idle)
+sys161: 1535 irqs 9 exns 0r/0w disk 0r/828w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.499047 seconds (15.29 mhz)
+sys161: Elapsed virtual time: 0.305216600 seconds (25 mhz)
+
+running crash running crash with option = b
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash b
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x400068, vaddr 0x40000000)
+Operation took 0.107076040 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7700768 cycles (6331757 run, 1369011 global-idle)
+sys161:   cpu0: 6162727 kern, 40 user, 168990 idle)
+sys161:   cpu1: 237119 kern, 0 user, 6094638 idle)
+sys161:   cpu2: 239298 kern, 0 user, 6092459 idle)
+sys161:   cpu3: 238585 kern, 0 user, 6093172 idle)
+sys161: 1550 irqs 9 exns 0r/0w disk 0r/835w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.407247 seconds (18.9093 mhz)
+sys161: Elapsed virtual time: 0.308030720 seconds (25 mhz)
+
+running crash running crash with option = c
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash c
+Fatal user mode trap 4 sig 10 (Address error on load, epc 0x400080, vaddr 0x80000000)
+Operation took 0.109019840 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7750693 cycles (6381080 run, 1369613 global-idle)
+sys161:   cpu0: 6211350 kern, 40 user, 169690 idle)
+sys161:   cpu1: 237838 kern, 0 user, 6143242 idle)
+sys161:   cpu2: 240017 kern, 0 user, 6141063 idle)
+sys161:   cpu3: 239304 kern, 0 user, 6141776 idle)
+sys161: 1561 irqs 9 exns 0r/0w disk 0r/840w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.413015 seconds (18.7661 mhz)
+sys161: Elapsed virtual time: 0.310027720 seconds (25 mhz)
+
+running crash running crash with option = d
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash d
+Fatal user mode trap 3 sig 11 (TLB miss on store, epc 0x400098, vaddr 0x0)
+Operation took 0.104880600 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7646789 cycles (6275573 run, 1371216 global-idle)
+sys161:   cpu0: 6105950 kern, 41 user, 169582 idle)
+sys161:   cpu1: 237723 kern, 0 user, 6037850 idle)
+sys161:   cpu2: 239902 kern, 0 user, 6035671 idle)
+sys161:   cpu3: 239189 kern, 0 user, 6036384 idle)
+sys161: 1538 irqs 9 exns 0r/0w disk 0r/829w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.406599 seconds (18.8067 mhz)
+sys161: Elapsed virtual time: 0.305871560 seconds (25 mhz)
+
+running crash running crash with option = e
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash e
+Fatal user mode trap 3 sig 11 (TLB miss on store, epc 0x4000a8, vaddr 0x40000000)
+Operation took 0.107492280 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7712201 cycles (6341513 run, 1370688 global-idle)
+sys161:   cpu0: 6171770 kern, 42 user, 169701 idle)
+sys161:   cpu1: 237839 kern, 0 user, 6103674 idle)
+sys161:   cpu2: 240018 kern, 0 user, 6101495 idle)
+sys161:   cpu3: 239305 kern, 0 user, 6102208 idle)
+sys161: 1552 irqs 9 exns 0r/0w disk 0r/836w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.407285 seconds (18.9356 mhz)
+sys161: Elapsed virtual time: 0.308488040 seconds (25 mhz)
+
+running crash running crash with option = g
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash g
+Fatal user mode trap 5 sig 10 (Address error on store, epc 0x4000c8, vaddr 0x80000000)
+Operation took 0.109309760 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7757152 cycles (6389020 run, 1368132 global-idle)
+sys161:   cpu0: 6219447 kern, 42 user, 169531 idle)
+sys161:   cpu1: 237673 kern, 0 user, 6151347 idle)
+sys161:   cpu2: 239852 kern, 0 user, 6149168 idle)
+sys161:   cpu3: 239139 kern, 0 user, 6149881 idle)
+sys161: 1563 irqs 9 exns 0r/0w disk 0r/841w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.417732 seconds (18.5697 mhz)
+sys161: Elapsed virtual time: 0.310286080 seconds (25 mhz)
+
+running crash running crash with option = h
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash h
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x4000d4, vaddr 0x0)
+Operation took 0.104466400 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7633814 cycles (6263871 run, 1369943 global-idle)
+sys161:   cpu0: 6093939 kern, 40 user, 169892 idle)
+sys161:   cpu1: 238028 kern, 0 user, 6025843 idle)
+sys161:   cpu2: 240207 kern, 0 user, 6023664 idle)
+sys161:   cpu3: 239494 kern, 0 user, 6024377 idle)
+sys161: 1535 irqs 9 exns 0r/0w disk 0r/828w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.406219 seconds (18.7924 mhz)
+sys161: Elapsed virtual time: 0.305352560 seconds (25 mhz)
+
+running crash running crash with option = i
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash i
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x4000e0, vaddr 0x40000000)
+Operation took 0.107114040 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7702764 cycles (6332803 run, 1369961 global-idle)
+sys161:   cpu0: 6162743 kern, 40 user, 170020 idle)
+sys161:   cpu1: 238135 kern, 0 user, 6094668 idle)
+sys161:   cpu2: 240314 kern, 0 user, 6092489 idle)
+sys161:   cpu3: 239601 kern, 0 user, 6093202 idle)
+sys161: 1550 irqs 9 exns 0r/0w disk 0r/835w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.406722 seconds (18.9386 mhz)
+sys161: Elapsed virtual time: 0.308110560 seconds (25 mhz)
+
+running crash running crash with option = j
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash j
+Fatal user mode trap 4 sig 10 (Address error on load, epc 0x4000ec, vaddr 0x80000000)
+Operation took 0.109055440 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7751030 cycles (6380527 run, 1370503 global-idle)
+sys161:   cpu0: 6211350 kern, 40 user, 169137 idle)
+sys161:   cpu1: 237288 kern, 0 user, 6143239 idle)
+sys161:   cpu2: 239467 kern, 0 user, 6141060 idle)
+sys161:   cpu3: 238754 kern, 0 user, 6141773 idle)
+sys161: 1561 irqs 9 exns 0r/0w disk 0r/840w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.409707 seconds (18.9185 mhz)
+sys161: Elapsed virtual time: 0.310041200 seconds (25 mhz)
+
+running crash running crash with option = k
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash k
+Fatal user mode trap 4 sig 10 (Address error on load, epc 0x400104, vaddr 0x7fffff91)
+Operation took 0.108909560 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7748087 cycles (6381231 run, 1366856 global-idle)
+sys161:   cpu0: 6211351 kern, 40 user, 169840 idle)
+sys161:   cpu1: 237969 kern, 0 user, 6143262 idle)
+sys161:   cpu2: 240148 kern, 0 user, 6141083 idle)
+sys161:   cpu3: 239435 kern, 0 user, 6141796 idle)
+sys161: 1561 irqs 9 exns 0r/0w disk 0r/840w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.414449 seconds (18.6949 mhz)
+sys161: Elapsed virtual time: 0.309923480 seconds (25 mhz)
+
+running crash running crash with option = l
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash l
+Fatal user mode trap 10 sig 4 (Illegal instruction, epc 0x4000f4, vaddr 0x0)
+Operation took 0.105709000 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7667296 cycles (6297182 run, 1370114 global-idle)
+sys161:   cpu0: 6127449 kern, 39 user, 169694 idle)
+sys161:   cpu1: 237836 kern, 0 user, 6059346 idle)
+sys161:   cpu2: 240015 kern, 0 user, 6057167 idle)
+sys161:   cpu3: 239302 kern, 0 user, 6057880 idle)
+sys161: 1543 irqs 9 exns 0r/0w disk 0r/831w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.409822 seconds (18.7088 mhz)
+sys161: Elapsed virtual time: 0.306691840 seconds (25 mhz)
+
+running crash running crash with option = m
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash m
+Fatal user mode trap 9 sig 5 (Break instruction, epc 0x40013c, vaddr 0x0)
+Operation took 0.104683760 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7641281 cycles (6270306 run, 1370975 global-idle)
+sys161:   cpu0: 6101263 kern, 48 user, 168995 idle)
+sys161:   cpu1: 237159 kern, 0 user, 6033147 idle)
+sys161:   cpu2: 239338 kern, 0 user, 6030968 idle)
+sys161:   cpu3: 238625 kern, 0 user, 6031681 idle)
+sys161: 1537 irqs 9 exns 0r/0w disk 0r/828w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.407810 seconds (18.7374 mhz)
+sys161: Elapsed virtual time: 0.305651240 seconds (25 mhz)
+
+running crash running crash with option = n
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash n
+Fatal user mode trap 9 sig 5 (Break instruction, epc 0x400174, vaddr 0x0)
+Operation took 0.104628400 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7640472 cycles (6270883 run, 1369589 global-idle)
+sys161:   cpu0: 6101265 kern, 48 user, 169570 idle)
+sys161:   cpu1: 237687 kern, 0 user, 6033196 idle)
+sys161:   cpu2: 239866 kern, 0 user, 6031017 idle)
+sys161:   cpu3: 239153 kern, 0 user, 6031730 idle)
+sys161: 1537 irqs 9 exns 0r/0w disk 0r/828w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.404401 seconds (18.8933 mhz)
+sys161: Elapsed virtual time: 0.305618880 seconds (25 mhz)
+
+RUNNING ALL BADCALLS TESTS NOW
+
+---------------------------------------------------------------
+RUNNING test-badcalls-read-file TESTS
+This test is skipped because it requires lseek
+
+---------------------------------------------------------------
+RUNNING test-badcalls-write-file TESTS
+Ignore messages: Unknown syscall 68 (remove)
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/badcall e
+[a-|, 1-4, *, ?=menu, !=quit]
+Choose: e
+testbin/badcall: passed: write using fd -1
+testbin/badcall: passed: write using fd -5
+testbin/badcall: passed: write using closed fd
+testbin/badcall: passed: write using impossible fd
+testbin/badcall: passed: write using fd OPEN_MAX
+testbin/badcall: passed: write with NULL buffer
+Unknown syscall 68
+testbin/badcall: passed: write with invalid buffer
+Unknown syscall 68
+testbin/badcall: passed: write with kernel-space buffer
+Unknown syscall 68
+Operation took 0.268626160 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 11754117 cycles (9138200 run, 2615917 global-idle)
+sys161:   cpu0: 8937392 kern, 30949 user, 169859 idle)
+sys161:   cpu1: 237998 kern, 0 user, 8900202 idle)
+sys161:   cpu2: 240177 kern, 0 user, 8898023 idle)
+sys161:   cpu3: 239464 kern, 0 user, 8898736 idle)
+sys161: 1986 irqs 296 exns 0r/0w disk 0r/1251w console 10r/3w/9m emufs 0r/0w net
+sys161: Elapsed real time: 0.791145 seconds (14.8571 mhz)
+sys161: Elapsed virtual time: 0.470164680 seconds (25 mhz)
+
+
+---------------------------------------------------------------
+RUNNING test-badcalls-execv TESTS
+
+
+Put-your-group-name-here's system version 0 (ASST2 #512)
+
+2852k physical memory available
+Create pt->size -1
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/badcall a
+[a-|, 1-4, *, ?=menu, !=quit]
+Choose: a
+testbin/badcall: passed: exec NULL
+testbin/badcall: passed: exec invalid pointer
+testbin/badcall: passed: exec kernel pointer
+testbin/badcall: passed: exec the empty string
+testbin/badcall: passed: exec /bin/true with NULL arglist
+testbin/badcall: passed: exec /bin/true with invalid pointer arglist
+testbin/badcall: passed: exec /bin/true with kernel pointer arglist
+testbin/badcall: passed: exec /bin/true with invalid pointer arg
+testbin/badcall: passed: exec /bin/true with kernel pointer arg
+Operation took 0.586055040 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 19702207 cycles (18208769 run, 1493438 global-idle)
+sys161:   cpu0: 18147639 kern, 17206 user, 43924 idle)
+sys161:   cpu1: 238097 kern, 0 user, 17970672 idle)
+sys161:   cpu2: 240276 kern, 0 user, 17968493 idle)
+sys161:   cpu3: 239563 kern, 0 user, 17969206 idle)
+sys161: 2007 irqs 350 exns 0r/0w disk 0r/1304w console 10r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 1.136348 seconds (17.3382 mhz)
+sys161: Elapsed virtual time: 0.788088280 seconds (25 mhz)
+
+
+
+---------------------------------------------------------------
+RUNNING test-badcalls-waitpid TESTS
+This test is skipped because it requires lseek
+
+

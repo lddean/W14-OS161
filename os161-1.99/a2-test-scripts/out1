@@ -1,0 +1,611 @@
+
+running crash running crash with option = a
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash a
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x400050, vaddr 0x0)
+Operation took 0.104416080 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7725194 cycles (6356456 run, 1368738 global-idle)
+sys161:   cpu0: 6312532 kern, 39 user, 43885 idle)
+sys161:   cpu1: 238067 kern, 0 user, 6118389 idle)
+sys161:   cpu2: 240246 kern, 0 user, 6116210 idle)
+sys161:   cpu3: 239533 kern, 0 user, 6116923 idle)
+sys161: 1570 irqs 9 exns 0r/0w disk 0r/846w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.431970 seconds (17.8836 mhz)
+sys161: Elapsed virtual time: 0.309007760 seconds (25 mhz)
+
+running crash running crash with option = b
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash b
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x400068, vaddr 0x40000000)
+Operation took 0.107107760 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7794817 cycles (6424961 run, 1369856 global-idle)
+sys161:   cpu0: 6256001 kern, 40 user, 168920 idle)
+sys161:   cpu1: 237059 kern, 0 user, 6187902 idle)
+sys161:   cpu2: 239238 kern, 0 user, 6185723 idle)
+sys161:   cpu3: 238525 kern, 0 user, 6186436 idle)
+sys161: 1586 irqs 9 exns 0r/0w disk 0r/853w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.429861 seconds (18.1333 mhz)
+sys161: Elapsed virtual time: 0.311792680 seconds (25 mhz)
+
+running crash running crash with option = c
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash c
+Fatal user mode trap 4 sig 10 (Address error on load, epc 0x400080, vaddr 0x80000000)
+Operation took 0.108969680 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7842863 cycles (6474452 run, 1368411 global-idle)
+sys161:   cpu0: 6304640 kern, 40 user, 169772 idle)
+sys161:   cpu1: 237904 kern, 0 user, 6236548 idle)
+sys161:   cpu2: 240083 kern, 0 user, 6234369 idle)
+sys161:   cpu3: 239370 kern, 0 user, 6235082 idle)
+sys161: 1597 irqs 9 exns 0r/0w disk 0r/858w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.438321 seconds (17.893 mhz)
+sys161: Elapsed virtual time: 0.313714520 seconds (25 mhz)
+
+running crash running crash with option = d
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash d
+Fatal user mode trap 3 sig 11 (TLB miss on store, epc 0x400098, vaddr 0x0)
+Operation took 0.104773080 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7737506 cycles (6368926 run, 1368580 global-idle)
+sys161:   cpu0: 6199224 kern, 41 user, 169661 idle)
+sys161:   cpu1: 237796 kern, 0 user, 6131130 idle)
+sys161:   cpu2: 239975 kern, 0 user, 6128951 idle)
+sys161:   cpu3: 239262 kern, 0 user, 6129664 idle)
+sys161: 1574 irqs 9 exns 0r/0w disk 0r/847w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.425620 seconds (18.1794 mhz)
+sys161: Elapsed virtual time: 0.309500240 seconds (25 mhz)
+
+running crash running crash with option = e
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash e
+Fatal user mode trap 3 sig 11 (TLB miss on store, epc 0x4000a8, vaddr 0x40000000)
+Operation took 0.107449920 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7804464 cycles (6434783 run, 1369681 global-idle)
+sys161:   cpu0: 6265043 kern, 42 user, 169698 idle)
+sys161:   cpu1: 237837 kern, 0 user, 6196946 idle)
+sys161:   cpu2: 240016 kern, 0 user, 6194767 idle)
+sys161:   cpu3: 239303 kern, 0 user, 6195480 idle)
+sys161: 1588 irqs 9 exns 0r/0w disk 0r/854w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.432246 seconds (18.0556 mhz)
+sys161: Elapsed virtual time: 0.312178560 seconds (25 mhz)
+
+running crash running crash with option = g
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash g
+Fatal user mode trap 5 sig 10 (Address error on store, epc 0x4000c8, vaddr 0x80000000)
+Operation took 0.109349840 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7851675 cycles (6482489 run, 1369186 global-idle)
+sys161:   cpu0: 6312721 kern, 42 user, 169726 idle)
+sys161:   cpu1: 237856 kern, 0 user, 6244633 idle)
+sys161:   cpu2: 240035 kern, 0 user, 6242454 idle)
+sys161:   cpu3: 239322 kern, 0 user, 6243167 idle)
+sys161: 1599 irqs 9 exns 0r/0w disk 0r/859w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.436631 seconds (17.9824 mhz)
+sys161: Elapsed virtual time: 0.314067000 seconds (25 mhz)
+
+running crash running crash with option = h
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash h
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x4000d4, vaddr 0x0)
+Operation took 0.104436800 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7725275 cycles (6356020 run, 1369255 global-idle)
+sys161:   cpu0: 6312067 kern, 40 user, 43913 idle)
+sys161:   cpu1: 237602 kern, 0 user, 6118418 idle)
+sys161:   cpu2: 239781 kern, 0 user, 6116239 idle)
+sys161:   cpu3: 239068 kern, 0 user, 6116952 idle)
+sys161: 1570 irqs 9 exns 0r/0w disk 0r/846w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.447292 seconds (17.2712 mhz)
+sys161: Elapsed virtual time: 0.309011000 seconds (25 mhz)
+
+running crash running crash with option = i
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash i
+Fatal user mode trap 2 sig 11 (TLB miss on load, epc 0x4000e0, vaddr 0x40000000)
+Operation took 0.107085200 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7794761 cycles (6425469 run, 1369292 global-idle)
+sys161:   cpu0: 6256001 kern, 40 user, 169428 idle)
+sys161:   cpu1: 237577 kern, 0 user, 6187892 idle)
+sys161:   cpu2: 239756 kern, 0 user, 6185713 idle)
+sys161:   cpu3: 239043 kern, 0 user, 6186426 idle)
+sys161: 1586 irqs 9 exns 0r/0w disk 0r/853w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.430650 seconds (18.1 mhz)
+sys161: Elapsed virtual time: 0.311790440 seconds (25 mhz)
+
+running crash running crash with option = j
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash j
+Fatal user mode trap 4 sig 10 (Address error on load, epc 0x4000ec, vaddr 0x80000000)
+Operation took 0.109001720 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7843395 cycles (6474183 run, 1369212 global-idle)
+sys161:   cpu0: 6304624 kern, 40 user, 169519 idle)
+sys161:   cpu1: 237661 kern, 0 user, 6236522 idle)
+sys161:   cpu2: 239840 kern, 0 user, 6234343 idle)
+sys161:   cpu3: 239127 kern, 0 user, 6235056 idle)
+sys161: 1597 irqs 9 exns 0r/0w disk 0r/858w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.434307 seconds (18.0596 mhz)
+sys161: Elapsed virtual time: 0.313735800 seconds (25 mhz)
+
+running crash running crash with option = k
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash k
+Fatal user mode trap 4 sig 10 (Address error on load, epc 0x400104, vaddr 0x7fffff91)
+Operation took 0.109012080 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7843243 cycles (6473772 run, 1369471 global-idle)
+sys161:   cpu0: 6304624 kern, 40 user, 169108 idle)
+sys161:   cpu1: 237250 kern, 0 user, 6236522 idle)
+sys161:   cpu2: 239429 kern, 0 user, 6234343 idle)
+sys161:   cpu3: 238716 kern, 0 user, 6235056 idle)
+sys161: 1597 irqs 9 exns 0r/0w disk 0r/858w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.443954 seconds (17.6668 mhz)
+sys161: Elapsed virtual time: 0.313729720 seconds (25 mhz)
+
+running crash running crash with option = l
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash l
+Fatal user mode trap 10 sig 4 (Illegal instruction, epc 0x4000f4, vaddr 0x0)
+Operation took 0.105605840 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7757398 cycles (6389811 run, 1367587 global-idle)
+sys161:   cpu0: 6220724 kern, 39 user, 169048 idle)
+sys161:   cpu1: 237181 kern, 0 user, 6152630 idle)
+sys161:   cpu2: 239360 kern, 0 user, 6150451 idle)
+sys161:   cpu3: 238647 kern, 0 user, 6151164 idle)
+sys161: 1579 irqs 9 exns 0r/0w disk 0r/849w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.430811 seconds (18.0065 mhz)
+sys161: Elapsed virtual time: 0.310295920 seconds (25 mhz)
+
+running crash running crash with option = m
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash m
+Fatal user mode trap 9 sig 5 (Break instruction, epc 0x40013c, vaddr 0x0)
+Operation took 0.104604680 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7732047 cycles (6362997 run, 1369050 global-idle)
+sys161:   cpu0: 6319035 kern, 48 user, 43914 idle)
+sys161:   cpu1: 237229 kern, 0 user, 6125768 idle)
+sys161:   cpu2: 239408 kern, 0 user, 6123589 idle)
+sys161:   cpu3: 238695 kern, 0 user, 6124302 idle)
+sys161: 1572 irqs 9 exns 0r/0w disk 0r/846w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.430272 seconds (17.9701 mhz)
+sys161: Elapsed virtual time: 0.309281880 seconds (25 mhz)
+
+running crash running crash with option = n
+sys161: System/161 release 1.99.06, compiled Aug 23 2013 10:23:34
+
+OS/161 base system version 1.99.05
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2008, 2009
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (ASST2 #408)
+
+2852k physical memory available
+tom's pt->size and array size is 0 1
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS r3000
+cpu1: MIPS r3000
+cpu2: MIPS r3000
+cpu3: MIPS r3000
+OS/161 kernel: p testbin/crash n
+Fatal user mode trap 9 sig 5 (Break instruction, epc 0x400174, vaddr 0x0)
+Operation took 0.104588360 seconds
+OS/161 kernel: q
+Shutting down.
+cpu1: offline.
+The system is halted.
+cpu2: offline.
+cpu3: offline.
+sys161: 7731979 cycles (6363337 run, 1368642 global-idle)
+sys161:   cpu0: 6319403 kern, 48 user, 43886 idle)
+sys161:   cpu1: 237613 kern, 0 user, 6125724 idle)
+sys161:   cpu2: 239792 kern, 0 user, 6123545 idle)
+sys161:   cpu3: 239079 kern, 0 user, 6124258 idle)
+sys161: 1572 irqs 9 exns 0r/0w disk 0r/846w console 9r/0w/3m emufs 0r/0w net
+sys161: Elapsed real time: 0.434422 seconds (17.7983 mhz)
+sys161: Elapsed virtual time: 0.309279160 seconds (25 mhz)
