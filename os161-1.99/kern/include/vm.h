@@ -44,6 +44,21 @@
 #define VM_FAULT_WRITE       1    /* A write was attempted */
 #define VM_FAULT_READONLY    2    /* A write to a readonly page was attempted*/
 
+/*struct page{
+        vaddr_t va; // virtual address
+
+        vaddr_t pa; // physical address
+        int state; // 0->fixed; 1->free; 2->dirty
+
+    //struct addrspace* as;
+        //int count;
+};
+
+// this is coremap, record pages information
+struct page* pages; 
+int core_size, page_size;
+paddr_t firstPaddr, lastPaddr, endCore;
+*/
 
 /* Initialization function */
 void vm_bootstrap(void);
@@ -54,6 +69,9 @@ int vm_fault(int faulttype, vaddr_t faultaddress);
 /* Allocate/free kernel heap pages (called by kmalloc/kfree) */
 vaddr_t alloc_kpages(int npages);
 void free_kpages(vaddr_t addr);
+
+int
+tlb_get_rr_victim(void);
 
 /* TLB shootdown handling called from interprocessor_interrupt */
 void vm_tlbshootdown_all(void);
