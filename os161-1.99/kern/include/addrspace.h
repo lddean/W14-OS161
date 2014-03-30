@@ -49,24 +49,26 @@ struct vnode;
  */
 
 struct addrspace {
-#if OPT_DUMBVM
+//#if OPT_DUMBVM
+    
         vaddr_t as_vbase1;
-        paddr_t as_pbase1;
+        //paddr_t as_pbase1;
         size_t as_npages1;
+    off_t offset1;
+    size_t filesize1;
+    size_t memsize1;
         vaddr_t as_vbase2;
-        paddr_t as_pbase2;
+        //paddr_t as_pbase2;
         size_t as_npages2;
+    off_t offset2;
+    size_t filesize2;
+    size_t memsize2;
+    
+    int executable;
+    
+    struct vnode *vnode;
         paddr_t as_stackpbase;
-#else
-        vaddr_t as_vbase1;
-        paddr_t as_pbase1;
-        size_t as_npages1;
-        vaddr_t as_vbase2;
-        paddr_t as_pbase2;
-        size_t as_npages2;
-        paddr_t as_stackpbase;
-        /* Put stuff here for your VM system */
-#endif
+    
 };
 
 /*
@@ -113,6 +115,8 @@ void              as_destroy(struct addrspace *);
 
 int               as_define_region(struct addrspace *as, 
                                    vaddr_t vaddr, size_t sz,
+                                   off_t offset,
+                                   size_t filesize,
                                    int readable, 
                                    int writeable,
                                    int executable);
