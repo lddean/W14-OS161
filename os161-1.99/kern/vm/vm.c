@@ -37,7 +37,6 @@
 #include <mips/tlb.h>
 #include <addrspace.h>
 #include <vm.h>
-#include <coremap.h>
 
 /*
  * Dumb MIPS-only "VM system" that is intended to only be just barely
@@ -48,11 +47,40 @@
 
 #define DUMBVM_STACKPAGES    12
 
+#if 0 
+/* You will need to call this at some point */
+static
+paddr_t
+getppages(unsigned long npages)
+{
+	(void)npages;
+	panic("Not implemented yet.\n");
+   	return (paddr_t) NULL;
+}
+#endif
+
+/* Allocate/free some kernel-space virtual pages */
+vaddr_t 
+alloc_kpages(int npages)
+{
+   /* Adapt code form dumbvm or implement something new */
+	 (void)npages;
+	 panic("Not implemented yet.\n");
+   return (vaddr_t) NULL;
+}
+
+void 
+free_kpages(vaddr_t addr)
+{
+	/* nothing - leak the memory. */
+
+	(void)addr;
+}
 
 void
 vm_bootstrap(void)
 {
-	coremap_init();
+	/* Do nothing. */
 }
 
 void
@@ -97,7 +125,8 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	    case VM_FAULT_READONLY:
 		/* We always create pages read-write, so we can't get this */
 		//panic("dumbvm: got VM_FAULT_READONLY\n");
-			//handle error for uw-vmstat
+		// access to certain portions of address space is restricted
+			return EFAULT;
 	    case VM_FAULT_READ:
 	    case VM_FAULT_WRITE:
 		break;
@@ -113,7 +142,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		 */
 		return EFAULT;
 	}
-
+	// each as should contain its own page table along with its own TLB
 	as = curproc_getas();
 	if (as == NULL) {
 		/*
@@ -165,18 +194,36 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 
 	for (i=0; i<NUM_TLB; i++) {
 		tlb_read(&ehi, &elo, i);
-		if (elo & TLBLO_VALID) {
+		if (elo & TLBLO_VALID) { // check if the page entry is valid (in-use)
 			continue;
 		}
+		// an entry is invalid -> write into that entry
 		ehi = faultaddress;
 		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
-		int victim_index = tlb_get_rr_victim();
-		tlb_write(ehi, elo, victim_index);
+		tlb_write(ehi, elo, i);
+		// insert into pgtbl
 		splx(spl);
 		return 0;
 	}
-
+	// if it gets here, TLB is full, use round-robin to replace page entry
+	int victim_index = tlb_get_rr_victim();
+	ehi = faultaddress;
+	elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+	DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
+	tlb_write(ehi, elo, victim_index);
+	splx(spl);
+	
+	// on-demand page loading (page getting loaded for first time)
+	//check if page in memory
+	if (page_exist(as->pgtbl, faultaddress)){
+		continue; //If it's already in page table, 
+				  //it means entry is already stored in TLB
+	}
+	else{
+		paddr_t pa = getppages(1);//need coremap from Tom
+		int retval;
+		
 	kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
 	splx(spl);
 	return EFAULT;
