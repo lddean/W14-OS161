@@ -25,10 +25,13 @@
 static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
 
 int time;
+bool boot=false;
 
 void
 vm_bootstrap(void)
 {
+	coremap_init();
+	boot = true;
 	/* Do nothing. */
 }
 
@@ -50,12 +53,16 @@ getppages(unsigned long npages)
 vaddr_t
 alloc_kpages(int npages)
 {
+	if(!boot){
 	paddr_t pa;
 	pa = getppages(npages);
 	if (pa==0) {
 		return 0;
 	}
 	return PADDR_TO_KVADDR(pa);
+	}else{
+		return coremap_alloc(npages);
+	}
 }
 
 void
