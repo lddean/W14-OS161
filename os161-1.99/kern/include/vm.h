@@ -37,6 +37,21 @@
  */
 
 
+#include <types.h>
+#include <kern/errno.h>
+#include <lib.h>
+#include <spl.h>
+#include <vnode.h>
+#include <spinlock.h>
+#include <proc.h>
+#include <current.h>
+#include <mips/tlb.h>
+#include <addrspace.h>
+#include <vm.h>
+#include <pt.h>
+#include <coremap.h>
+#include <uio.h>
+#include <elf.h>
 #include <machine/vm.h>
 
 /* Fault-type arguments to vm_fault() */
@@ -77,5 +92,6 @@ tlb_get_rr_victim(void);
 void vm_tlbshootdown_all(void);
 void vm_tlbshootdown(const struct tlbshootdown *);
 
+int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offset, vaddr_t vaddr, paddr_t paddr, size_t memsize, size_t filesize, int is_executable);
 
 #endif /* _VM_H_ */

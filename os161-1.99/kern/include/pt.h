@@ -1,18 +1,20 @@
-#ifndef PAGE_H
-#define PAGE_H
+//#if OPT_A3
+#ifndef PT_H
+#define PT_H
 
 #include "opt-A3.h"
-#if OPT_A3
+#include <types.h>
+#include <lib.h>
+#include <array.h>
+#include <synch.h>
 
+/*#include "opt-A3.h"
+#include <kern/errno.h>
 #include <array.h>
 #include <lib.h>
 #include <types.h>
+#include <vm.h>*/
 
-#include <kern/errno.h>
-//#include <lib.h>
-#include <vm.h>
-//#include <array.h>
-//#include <types.h>
 //structure for each page
 struct page{
 	vaddr_t va;
@@ -33,6 +35,4 @@ void page_table_add(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr);
 paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr);
 
 #endif
-#endif
-
-
+//#endif

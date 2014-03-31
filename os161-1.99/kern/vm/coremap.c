@@ -16,13 +16,13 @@ void coremap_init(void){
    	ram_getsize(&firstPaddr, &lastPaddr);
 
         // get the corresponding virtual pages
-        pages = (struct page*)PADDR_TO_KVADDR(firstPaddr);
+        pages = (struct core_page*)PADDR_TO_KVADDR(firstPaddr);
 
         // get page size(get multiple of PAGE_SIZE)
         page_size = (lastPaddr - firstPaddr)/PAGE_SIZE;
 
         // the paddr & offset for end of coremap
-        endCore = firstPaddr + page_size*(sizeof(struct page));
+        endCore = firstPaddr + page_size*(sizeof(struct core_page));
         // this is formula, but need round up  // core_size = (endCore - firstPaddr)/PAGE_SIZE;
         core_size = 1 + ((endCore - firstPaddr) - 1) / PAGE_SIZE;
 
@@ -32,7 +32,7 @@ void coremap_init(void){
 
 	// this will never be touched(set it to fixed), but initialize anyway
         for(int i=0; i<core_size; i++){
-                struct page* current = pages+i;
+                struct core_page* current = pages+i;
 
                 paddr_t current_paddr = firstPaddr + i*PAGE_SIZE; // get current physical address
                 current->pa = current_paddr;
@@ -43,7 +43,7 @@ void coremap_init(void){
         }
 
         for(int i=core_size; i<page_size; i++){
-                struct page* current = pages+i;
+                struct core_page* current = pages+i;
 
                 paddr_t current_paddr = firstPaddr + i*PAGE_SIZE; // get current physical address
                 current->pa = current_paddr;
@@ -57,7 +57,7 @@ void coremap_init(void){
 // check whether it has n consecutive pages starting at index i
 bool coremap_check_pages(int index, int npages){
 	for(int i=index; i<index+npages; i++){
-		struct page* current = pages+i;
+		struct core_page* current = pages+i;
 		if(current->state != 1){ // it is not free, return false	
 			return false;
 		}
@@ -68,10 +68,10 @@ bool coremap_check_pages(int index, int npages){
 // mark n consecutive pages as occupied, zero out physical/virtual addresses & return the first virtual address
 vaddr_t coremap_occupy_pages(int index, int npages){
 	for(int i=index; i<index+npages; i++){
-		struct page* current = pages+i;
+		struct core_page* current = pages+i;
 		current->state = 2; // mark it dirty(occupied)
 	}
-	struct page* valid = pages+index;
+	struct core_page* valid = pages+index;
 
 	// zero out physical/virtual address when we allocate
         bzero((void *)valid->pa, npages * PAGE_SIZE);
@@ -101,7 +101,7 @@ void coremap_free(vaddr_t addr){
 	lock_acquire(corelock);
 	int start=0; // start point to free
 
-	struct page* current = pages+start;
+	struct core_page* current = pages+start;
 	// loop to find starting point
 	while(current->va != addr){
 		start++;

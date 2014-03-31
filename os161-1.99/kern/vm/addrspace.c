@@ -1,4 +1,4 @@
-#include <types.h>
+/*#include <types.h>
 #include <kern/errno.h>
 #include <lib.h>
 #include <spl.h>
@@ -6,9 +6,8 @@
 #include <proc.h>
 #include <current.h>
 #include <mips/tlb.h>
-#include <addrspace.h>
 #include <vm.h>
-#include <pt.h>
+#include <pt.h>*/
 
 /*
  * Dumb MIPS-only "VM system" that is intended to only be just barely
@@ -16,6 +15,7 @@
  * code while doing the VM assignment. In fact, starting in that
  * assignment, this file is not included in your kernel!
  */
+#include <addrspace.h>
 
 /* under dumbvm, always have 48k of user stack */
 #define DUMBVM_STACKPAGES    12
@@ -51,7 +51,7 @@ as_create(void)
     as->memsize2 = 0;
     
     as->executable = 0;
-    as -> page_table = page_table_create();
+    as->page_table = page_table_create();
     as->vnode = NULL;
     
     

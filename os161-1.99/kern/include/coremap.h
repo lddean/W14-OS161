@@ -15,9 +15,9 @@
 #include <synch.h>
 #include <addrspace.h>
 
-struct page{
+struct core_page{
         vaddr_t va; // virtual address
-        vaddr_t pa; // physical address
+        paddr_t pa; // physical address
 
         int state; // 0->fixed; 1->free; 2->dirty(occupied)
 	
@@ -25,7 +25,7 @@ struct page{
 };
 
 // this is coremap, record pages information
-struct page* pages;
+struct core_page* pages;
 int core_size, page_size;
 paddr_t firstPaddr, lastPaddr, endCore;
 
