@@ -58,7 +58,7 @@
 int
 runprogram(char *progname, char **args,unsigned long argc)
 {
-    
+    kprintf("enter run program\n");
 	struct addrspace *as;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
@@ -79,6 +79,7 @@ runprogram(char *progname, char **args,unsigned long argc)
 		vfs_close(v);
 		return ENOMEM;
 	}
+	
 
 	/* Switch to it and activate it. */
 	curproc_setas(as);
@@ -86,6 +87,8 @@ runprogram(char *progname, char **args,unsigned long argc)
 
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
+	
+	kprintf("after laod elf %d\n", as->as_vbase1);
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);
@@ -93,7 +96,7 @@ runprogram(char *progname, char **args,unsigned long argc)
 	}
 
 	/* Done with the file now. */
-	vfs_close(v);
+	//vfs_close(v);
 
 	/* Define the user stack in the address space */
 	result = as_define_stack(as, &stackptr);

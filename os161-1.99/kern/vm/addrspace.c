@@ -99,6 +99,7 @@ as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, off_t offset,
                  size_t filesize,
                  int readable, int writeable, int executable)
 {
+kprintf("begin define region\n");
 	size_t npages;
     
 	/* Align the region. First, the base... */
@@ -121,6 +122,7 @@ as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, off_t offset,
         as->offset1 = offset;
         as->filesize1 = filesize;
         as->memsize1 = sz;
+        kprintf("end defien region\n");
 		return 0;
 	}
     
@@ -130,7 +132,7 @@ as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, off_t offset,
         as->offset2 = offset;
         as->filesize2 = filesize;
         as->memsize2 = sz;
-
+kprintf("end defien region\n");
 		return 0;
 	}
     
@@ -138,16 +140,17 @@ as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, off_t offset,
 	 * Support for more than two regions is not available.
 	 */
 	kprintf("dumbvm: Warning: too many regions\n");
+
 	return EUNIMP;
 }
-/*
+
 static
 void
 as_zero_region(paddr_t paddr, unsigned npages)
 {
 	bzero((void *)PADDR_TO_KVADDR(paddr), npages * PAGE_SIZE);
 }
-*/
+
 int
 as_prepare_load(struct addrspace *as)
 {/*
@@ -165,15 +168,17 @@ as_prepare_load(struct addrspace *as)
 		return ENOMEM;
 	}
     */
-//	as->as_stackpbase = getppages(DUMBVM_STACKPAGES);
-//	if (as->as_stackpbase == 0) {
-//		return ENOMEM;
-//	}
-	/*
-	as_zero_region(as->as_pbase1, as->as_npages1);
-	as_zero_region(as->as_pbase2, as->as_npages2);
+kprintf("here 11\n");
+	as->as_stackpbase = getppages(DUMBVM_STACKPAGES);
+kprintf("here 22\n");
+	if (as->as_stackpbase == 0) {
+		return ENOMEM;
+	}
+
+//	as_zero_region(as->as_pbase1, as->as_npages1);
+//	as_zero_region(as->as_pbase2, as->as_npages2);
 	as_zero_region(as->as_stackpbase, DUMBVM_STACKPAGES);
-    */
+    
     
     (void)as;
 	return 0;
@@ -197,7 +202,7 @@ as_define_stack(struct addrspace *as, vaddr_t *stackptr)
 
 int
 as_copy(struct addrspace *old, struct addrspace **ret)
-{
+{ 
 	struct addrspace *new;
     
 	new = as_create();

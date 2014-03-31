@@ -315,7 +315,7 @@ proc.o: ../../proc/proc.c ../../include/types.h \
   includelinks/kern/machine/setjmp.h ../../include/current.h \
   includelinks/machine/current.h ../../include/addrspace.h \
   ../../include/kern/errno.h ../../include/spl.h includelinks/mips/tlb.h \
-  ../../include/vm.h ../../include/pt.h ../../include/coremap.h \
+  ../../include/vm.h ../../include/pt.h opt-A3.h ../../include/coremap.h \
   ../../include/uio.h ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h
 hello.o: ../../startup/hello.c ../../include/types.h \
@@ -339,7 +339,7 @@ main.o: ../../startup/main.c ../../include/types.h \
   ../../include/proc.h ../../include/current.h \
   includelinks/machine/current.h ../../include/vm.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
-  opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
+  opt-A3.h opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h \
   ../../include/mainbus.h ../../include/device.h ../../include/test.h \
@@ -407,7 +407,7 @@ loadelf.o: ../../syscall/loadelf.c ../../include/types.h \
   ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
   ../../include/current.h includelinks/machine/current.h \
   ../../include/addrspace.h ../../include/spl.h includelinks/mips/tlb.h \
-  ../../include/vm.h ../../include/pt.h ../../include/coremap.h \
+  ../../include/vm.h ../../include/pt.h opt-A3.h ../../include/coremap.h \
   ../../include/elf.h includelinks/machine/elf.h \
   includelinks/machine/vm.h opt-dumbvm.h
 pid.o: ../../syscall/pid.c opt-A2.h ../../include/types.h \
@@ -425,7 +425,7 @@ pid.o: ../../syscall/pid.c opt-A2.h ../../include/types.h \
   includelinks/machine/thread.h ../../include/setjmp.h \
   includelinks/kern/machine/setjmp.h ../../include/proc.h \
   ../../include/addrspace.h ../../include/spl.h includelinks/mips/tlb.h \
-  ../../include/vm.h ../../include/pt.h ../../include/coremap.h \
+  ../../include/vm.h ../../include/pt.h opt-A3.h ../../include/coremap.h \
   ../../include/uio.h ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h \
   ../../include/pid.h
@@ -445,7 +445,7 @@ proc_syscalls.o: ../../syscall/proc_syscalls.c opt-A2.h \
   includelinks/kern/machine/setjmp.h ../../include/pid.h \
   ../../include/current.h includelinks/machine/current.h \
   ../../include/addrspace.h ../../include/spl.h includelinks/mips/tlb.h \
-  ../../include/vm.h ../../include/pt.h ../../include/coremap.h \
+  ../../include/vm.h ../../include/pt.h opt-A3.h ../../include/coremap.h \
   ../../include/uio.h ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h \
   ../../include/proc_syscalls.h ../../include/kern/wait.h \
@@ -465,7 +465,7 @@ runprogram.o: ../../syscall/runprogram.c ../../include/types.h \
   includelinks/kern/machine/setjmp.h ../../include/current.h \
   includelinks/machine/current.h ../../include/addrspace.h \
   ../../include/spl.h includelinks/mips/tlb.h ../../include/vm.h \
-  ../../include/pt.h ../../include/coremap.h ../../include/uio.h \
+  ../../include/pt.h opt-A3.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h \
   ../../include/test.h ../../include/copyinout.h
@@ -629,7 +629,7 @@ thread.o: ../../thread/thread.c ../../include/types.h \
   includelinks/kern/machine/setjmp.h ../../include/threadprivate.h \
   ../../include/proc.h ../../include/current.h \
   includelinks/machine/current.h ../../include/addrspace.h \
-  includelinks/mips/tlb.h ../../include/vm.h ../../include/pt.h \
+  includelinks/mips/tlb.h ../../include/vm.h ../../include/pt.h opt-A3.h \
   ../../include/coremap.h ../../include/uio.h ../../include/kern/iovec.h \
   ../../include/elf.h includelinks/machine/elf.h opt-dumbvm.h \
   ../../include/mainbus.h ../../include/pid.h opt-synchprobs.h
@@ -720,7 +720,7 @@ addrspace.o: ../../vm/addrspace.c ../../include/addrspace.h \
   includelinks/mips/trapframe.h includelinks/machine/thread.h \
   ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
   ../../include/current.h includelinks/machine/current.h \
-  includelinks/mips/tlb.h ../../include/vm.h ../../include/pt.h \
+  includelinks/mips/tlb.h ../../include/vm.h ../../include/pt.h opt-A3.h \
   ../../include/coremap.h ../../include/uio.h ../../include/kern/iovec.h \
   ../../include/elf.h includelinks/machine/elf.h \
   includelinks/machine/vm.h opt-dumbvm.h
@@ -739,7 +739,7 @@ coremap.o: ../../vm/coremap.c ../../include/types.h \
   ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
   ../../include/current.h includelinks/machine/current.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/vm.h \
-  ../../include/pt.h ../../include/coremap.h ../../include/uio.h \
+  ../../include/pt.h opt-A3.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h
 kmalloc.o: ../../vm/kmalloc.c ../../include/types.h \
@@ -757,19 +757,23 @@ kmalloc.o: ../../vm/kmalloc.c ../../include/types.h \
   ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
   ../../include/current.h includelinks/machine/current.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
-  opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
+  opt-A3.h opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h
-pt.o: ../../vm/pt.c ../../include/pt.h
+pt.o: ../../vm/pt.c ../../include/pt.h opt-A3.h ../../include/types.h \
+  ../../include/kern/types.h includelinks/kern/machine/types.h \
+  includelinks/machine/types.h ../../include/lib.h ../../include/cdefs.h \
+  opt-noasserts.h ../../include/array.h ../../include/synch.h \
+  ../../include/spinlock.h includelinks/machine/spinlock.h opt-A1.h
 uw-vmstats.o: ../../vm/uw-vmstats.c ../../include/types.h \
   ../../include/kern/types.h includelinks/kern/machine/types.h \
   includelinks/machine/types.h ../../include/lib.h ../../include/cdefs.h \
   opt-noasserts.h ../../include/synch.h ../../include/spinlock.h \
   includelinks/machine/spinlock.h opt-A1.h ../../include/spl.h \
   ../../include/uw-vmstats.h
-vm.o: ../../vm/vm.c ../../include/vm.h ../../include/types.h \
-  ../../include/kern/types.h includelinks/kern/machine/types.h \
-  includelinks/machine/types.h ../../include/kern/errno.h \
+vm.o: ../../vm/vm.c ../../include/kern/errno.h ../../include/vm.h \
+  ../../include/types.h ../../include/kern/types.h \
+  includelinks/kern/machine/types.h includelinks/machine/types.h \
   ../../include/lib.h ../../include/cdefs.h opt-noasserts.h \
   ../../include/spl.h ../../include/vnode.h ../../include/spinlock.h \
   includelinks/machine/spinlock.h ../../include/proc.h \
@@ -782,7 +786,7 @@ vm.o: ../../vm/vm.c ../../include/vm.h ../../include/types.h \
   ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
   ../../include/current.h includelinks/machine/current.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
-  opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
+  opt-A3.h opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h
 adddi3.o: ../../../common/gcc-millicode/adddi3.c \
@@ -919,7 +923,7 @@ trap.o: ../../arch/mips/locore/trap.c ../../include/types.h \
   ../../include/current.h includelinks/machine/current.h \
   ../../include/vm.h ../../include/kern/errno.h ../../include/proc.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
-  opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
+  opt-A3.h opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h ../../include/mainbus.h
 syscall.o: ../../arch/mips/syscall/syscall.c ../../include/types.h \
@@ -995,7 +999,7 @@ ram.o: ../../arch/mips/vm/ram.c ../../include/types.h \
   ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
   ../../include/current.h includelinks/machine/current.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
-  opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
+  opt-A3.h opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h \
   ../../include/mainbus.h
@@ -1014,7 +1018,7 @@ copyinout.o: ../../vm/copyinout.c ../../include/types.h \
   ../../include/current.h includelinks/machine/current.h \
   ../../include/vm.h ../../include/spl.h ../../include/proc.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
-  opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
+  opt-A3.h opt-dumbvm.h ../../include/coremap.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h \
   ../../include/copyinout.h

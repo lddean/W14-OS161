@@ -494,6 +494,8 @@ thread_fork(const char *name,
 	    void (*entrypoint)(void *data1, unsigned long data2),
 	    void *data1, unsigned long data2)
 {
+
+kprintf("in thread_fork\n");
 	struct thread *newthread;
 	int result;
 
@@ -503,13 +505,16 @@ thread_fork(const char *name,
 	}
 
 	/* Allocate a stack */
+kprintf("222\n");
 	newthread->t_stack = kmalloc(STACK_SIZE);
+kprintf("11\n");
 	if (newthread->t_stack == NULL) {
 		thread_destroy(newthread);
 		return ENOMEM;
 	}
-	thread_checkstack_init(newthread);
 
+	thread_checkstack_init(newthread);
+kprintf("after checkstack_init\n");
 	/*
 	 * Now we clone various fields from the parent thread.
 	 */
@@ -522,6 +527,7 @@ thread_fork(const char *name,
 		proc = curthread->t_proc;
 	}
 	result = proc_addthread(proc, newthread);
+kprintf("after the addthread\n");
 	if (result) {
 		/* thread_destroy will clean up the stack */
 		thread_destroy(newthread);

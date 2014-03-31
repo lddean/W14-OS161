@@ -11,7 +11,7 @@
 
 // set up coremap
 void coremap_init(void){
-	corelock = lock_create("coremap");
+	//corelock = lock_create("coremap");
 
    	ram_getsize(&firstPaddr, &lastPaddr);
 
@@ -36,7 +36,8 @@ void coremap_init(void){
 
                 paddr_t current_paddr = firstPaddr + i*PAGE_SIZE; // get current physical address
                 current->pa = current_paddr;
-                current->va = PADDR_TO_KVADDR(current_paddr); // get current virtual address
+                current->as = curproc_getas();
+                //current->va = PADDR_TO_KVADDR(current_paddr); // get current virtual address
 
                 current->state = 0; // 0 is fixed
                 current->length = 0; // 0 is fixed
@@ -47,7 +48,8 @@ void coremap_init(void){
 
                 paddr_t current_paddr = firstPaddr + i*PAGE_SIZE; // get current physical address
                 current->pa = current_paddr;
-                current->va = PADDR_TO_KVADDR(current_paddr); // get current virtual address
+                current->as = curproc_getas();
+                //current->va = PADDR_TO_KVADDR(current_paddr); // get current virtual address
 
                 current->state = 1; // 1 is free
                 current->length = 0; // 1 is free
@@ -66,23 +68,28 @@ bool coremap_check_pages(int index, int npages){
 }
 	
 // mark n consecutive pages as occupied, zero out physical/virtual addresses & return the first virtual address
-vaddr_t coremap_occupy_pages(int index, int npages){
+paddr_t coremap_occupy_pages(int index, int npages){
 	for(int i=index; i<index+npages; i++){
 		struct core_page* current = pages+i;
+
+                current->as = curproc_getas();
 		current->state = 2; // mark it dirty(occupied)
 	}
 	struct core_page* valid = pages+index;
 
-	// zero out physical/virtual address when we allocate
-        bzero((void *)valid->pa, npages * PAGE_SIZE);
+	// zero out virtual address when we allocate
+        //bzero((void *)valid->pa, npages * PAGE_SIZE);
         bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
 
-	return valid->va;
+	return valid->pa;
 }
 
 // allocate n pages in physical memory
-vaddr_t coremap_alloc(int n){
-	lock_acquire(corelock);
+paddr_t coremap_alloc(int n){
+
+	//lock_acquire(corelock);	
+	//int spl = splhigh();
+
 	int i=0;
 	while(i < page_size){
 		if(!coremap_check_pages(i, n)){
@@ -92,18 +99,20 @@ vaddr_t coremap_alloc(int n){
 		}
 	}
 	// if it reaches here, should be a problem
-	lock_release(corelock);
+	//lock_release(corelock);
+	//splx(spl);
 	return -1;
 }
 
 // free coremap 
 void coremap_free(vaddr_t addr){
-	lock_acquire(corelock);
+	//lock_acquire(corelock);
+	//int spl = splhigh();
 	int start=0; // start point to free
 
 	struct core_page* current = pages+start;
 	// loop to find starting point
-	while(current->va != addr){
+	while(PADDR_TO_KVADDR(current->pa) != addr){
 		start++;
                 current = pages + start;
 		if(start == page_size){
@@ -113,12 +122,14 @@ void coremap_free(vaddr_t addr){
 
  	//use START point to free LENGTH memories	
 	int length = current->length;
-	for(int i=start; i<length; i++){
+	for(int i=start; i<start + length; i++){
 		current = pages+i;
+		current->as = NULL;
 		current->state = 1; // flag it to free
 	}
 
-	lock_release(corelock);
+	//lock_release(corelock);
+	//splx(spl);
 	// this is for shoot-down?
 	as_activate();
 }

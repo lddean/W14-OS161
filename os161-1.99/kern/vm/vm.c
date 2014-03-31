@@ -18,6 +18,7 @@
  * assignment, this file is not included in your kernel!
  */
 
+#include <kern/errno.h>
 #include <vm.h>
 /* under dumbvm, always have 48k of user stack */
 #define DUMBVM_STACKPAGES    12
@@ -38,21 +39,27 @@ vm_bootstrap(void)
 	/* Do nothing. */
 }
 
-static
 paddr_t
 getppages(unsigned long npages)
 {
+
+kprintf("in getppages\n");
 	if(!boot){
 	paddr_t addr;
     
 	spinlock_acquire(&stealmem_lock);
     
 	addr = ram_stealmem(npages);
-    
+kprintf("after ram-stealmem\n");
 	spinlock_release(&stealmem_lock);
 	return addr;
 	}else{
-		return VADDR_TO_KPADDR(coremap_alloc(npages));
+	kprintf("here else\n");
+		paddr_t addr;
+	kprintf("before the alloc\n");
+		addr = coremap_alloc(npages);
+	kprintf("after the alloc\n");
+		return addr;
 	}
 }
 
@@ -60,22 +67,19 @@ getppages(unsigned long npages)
 vaddr_t
 alloc_kpages(int npages)
 {
-	if(!boot){
 	paddr_t pa;
 	pa = getppages(npages);
 	if (pa==0) {
 		return 0;
 	}
 	return PADDR_TO_KVADDR(pa);
-	}else{
-		return coremap_alloc(npages);
-	}
 }
 
 void
 free_kpages(vaddr_t addr)
 {
 	/* nothing - leak the memory. */
+	coremap_free(addr);
     
 	(void)addr;
 }
@@ -122,7 +126,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
 	      (unsigned long) filesize, (unsigned long) vaddr);
     
     iov.iov_ubase = (userptr_t)PADDR_TO_KVADDR(paddr);
-	iov.iov_len = memsize;		 // length of the memory space
+ 	iov.iov_len = PAGE_SIZE;		 // length of the memory space
 	u.uio_iov = &iov;
 	u.uio_iovcnt = 1;
 	u.uio_resid = 0;          // amount to read from the file
@@ -133,9 +137,9 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
     
     int check = 0;
     
-    size_t fillamt = 0;
+    size_t need_resid = 0;
     
-    if (vbase - vaddr < filesize){
+    if (vaddr - vbase < filesize){
         
         check ++;
         
@@ -143,7 +147,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
             
             u.uio_resid = vbase - vaddr + filesize;
             
-            fillamt = vbase - vaddr + filesize;
+            need_resid = vbase - vaddr + filesize;
             
             check ++;
             
@@ -151,14 +155,14 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
             
             u.uio_resid = PAGE_SIZE;
             
-            fillamt = PAGE_SIZE;
+            need_resid = PAGE_SIZE;
             
             check ++;
             
         }
-        
+        kprintf("the vop_read in loading page\n");
         result = VOP_READ(v, &u);
-        
+        kprintf("finished vop_read in loading page\n");
         check ++;
         
         if (result) {
@@ -177,17 +181,17 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
     check ++;
     
     //size_t fillamt;
+  /*  
+    need_resid = PAGE_SIZE - filesize;
     
-    fillamt = PAGE_SIZE - filesize;
-    
-    if (fillamt > 0) {
+    if (need_resid > 0) {
         
         check ++;
         
         DEBUG(DB_EXEC, "ELF: Zero-filling %lu more bytes\n",
-              (unsigned long) fillamt);
-        u.uio_resid += fillamt;
-        result = uiomovezeros(fillamt, &u);
+              (unsigned long) need_resid);
+        u.uio_resid += need_resid;
+        result = uiomovezeros(need_resid, &u);
         
         check ++;
         
@@ -195,7 +199,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
             return result;
         }
     }
-    
+  */  
     //kprintf("the check = %d\n", check);
     
     return 0;
@@ -207,6 +211,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
 int
 vm_fault(int faulttype, vaddr_t faultaddress)
 {
+	kprintf("Begin vm_fault\n");
 	vaddr_t vbase1, vtop1, vbase2, vtop2, stackbase, stacktop;
 	paddr_t paddr;
 	int i;
@@ -230,8 +235,11 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	    default:
             return EINVAL;
 	}
-    
+     kprintf("check if curproc is NULL\n");
+
 	if (curproc == NULL) {
+		 kprintf("curproc is NULL\n");
+
 		/*
 		 * No process. This is probably a kernel fault early
 		 * in boot. Return EFAULT so as to panic instead of
@@ -239,27 +247,33 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		 */
 		return EFAULT;
 	}
-    
+
 	as = curproc_getas();
+	 kprintf("after curproc gets as\n");
+
 	if (as == NULL) {
+	  kprintf("as is NULL\n");
+
 		/*
 		 * No address space set up. This is probably also a
 		 * kernel fault early in boot.
 		 */
 		return EFAULT;
 	}
-    
+     kprintf("after as gets checked for NULL\n");
+
 	/* Assert that the address space has been set up properly. */
+	kprintf("as_vbase1: %d\n", as->as_vbase1);// vbase1 = 0
 	KASSERT(as->as_vbase1 != 0);
 	//KASSERT(as->as_pbase1 != 0);
-	KASSERT(as->as_npages1 != 0);
+	KASSERT(as->as_npages1 != 0); 
 	KASSERT(as->as_vbase2 != 0);
 	KASSERT(as->as_npages2 != 0);
 	KASSERT(as->as_stackpbase != 0);
 	KASSERT((as->as_vbase1 & PAGE_FRAME) == as->as_vbase1);
 	KASSERT((as->as_vbase2 & PAGE_FRAME) == as->as_vbase2);
 	KASSERT((as->as_stackpbase & PAGE_FRAME) == as->as_stackpbase);
-    
+     kprintf("after checking if page frame and stackbase are aligned\n");
 	vbase1 = as->as_vbase1;
 	vtop1 = vbase1 + as->as_npages1 * PAGE_SIZE;
 	vbase2 = as->as_vbase2;
@@ -281,9 +295,9 @@ vm_fault(int faulttype, vaddr_t faultaddress)
      }*/
     
    
-    
+    kprintf ("found new page entry\n");
     if (!page_exist(as->page_table, faultaddress)){
-        
+         
         times = 0;
         off_t offset;
         
@@ -294,7 +308,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
             times = times + 1;
             offset = faultaddress - as -> as_vbase1 + as -> offset1;
             
-            result = loading_page(as, as->as_vbase1, as ->vnode,offset, faultaddress, paddr, as->memsize1, as -> filesize1, as -> executable);
+            result = loading_page(as, as->as_vbase1, as ->vnode, offset, faultaddress, paddr, as->memsize1, as -> filesize1, as -> executable);
             
             times = times + 1;
             if (result){
@@ -325,12 +339,14 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         
     }
     
+    paddr = get_paddr(as->page_table, faultaddress);
+    
 	/* make sure it's page-aligned */
 	KASSERT((paddr & PAGE_FRAME) == paddr);
     
 	/* Disable interrupts on this CPU while frobbing the TLB. */
 	spl = splhigh();
-    
+   	kprintf("check TLB\n"); 
 	for (i=0; i<NUM_TLB; i++) {
 		tlb_read(&ehi, &elo, i);
 		if (elo & TLBLO_VALID) {
@@ -340,16 +356,19 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
 		tlb_write(ehi, elo, i);
+		kprintf("11111\n");
 		splx(spl);
+		kprintf("22222\n");
 		return 0;
 	}
-    
+    kprintf("TLB is full");
     int victim_index = tlb_get_rr_victim();
     ehi = faultaddress;
     elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
     DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
     tlb_write(ehi, elo, victim_index);
     splx(spl);
+   kprintf("about to exit");
     return 0;
 	//kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
 	//splx(spl);

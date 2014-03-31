@@ -16,8 +16,9 @@
 #include <addrspace.h>
 
 struct core_page{
-        vaddr_t va; // virtual address
+        //vaddr_t va; // virtual address
         paddr_t pa; // physical address
+	struct addrspace* as;
 
         int state; // 0->fixed; 1->free; 2->dirty(occupied)
 	
@@ -25,7 +26,7 @@ struct core_page{
 };
 
 // this is coremap, record pages information
-struct core_page* pages;
+struct core_page* pages; // first available page
 int core_size, page_size;
 paddr_t firstPaddr, lastPaddr, endCore;
 
@@ -41,8 +42,8 @@ struct lock *corelock; // lock for free/alloc
 
 void coremap_init(void);
 bool coremap_check_pages(int index, int pages);
-vaddr_t coremap_occupy_pages(int index, int pages);
-vaddr_t coremap_alloc(int n);
+paddr_t coremap_occupy_pages(int index, int pages);
+paddr_t coremap_alloc(int n);
 void coremap_free(vaddr_t addr);
 
 #endif
