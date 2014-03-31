@@ -42,6 +42,7 @@ static
 paddr_t
 getppages(unsigned long npages)
 {
+	if(!boot){
 	paddr_t addr;
     
 	spinlock_acquire(&stealmem_lock);
@@ -50,6 +51,9 @@ getppages(unsigned long npages)
     
 	spinlock_release(&stealmem_lock);
 	return addr;
+	}else{
+		return VADDR_TO_KPADDR(coremap_alloc(npages));
+	}
 }
 
 /* Allocate/free some kernel-space virtual pages */
