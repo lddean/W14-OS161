@@ -8,6 +8,11 @@
 #include <lib.h>
 #include <types.h>
 
+#include <kern/errno.h>
+//#include <lib.h>
+#include <vm.h>
+//#include <array.h>
+//#include <types.h>
 //structure for each page
 struct page{
 	vaddr_t va;
@@ -22,10 +27,12 @@ struct page_table{
 };
 	
 struct page_table* page_table_create(void);
-struct page* page_create(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr);
-int page_exit(struct page_table* pgtbl, vaddr_t vaddr);
+struct page* page_create(vaddr_t vaddr, paddr_t paddr);
+int page_exist(struct page_table* pgtbl, vaddr_t vaddr);
 void page_table_add(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr);	
 paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr);
 
 #endif
 #endif
+
+

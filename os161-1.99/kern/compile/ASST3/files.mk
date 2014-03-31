@@ -81,6 +81,7 @@ SRCS+=$(KTOP)/vfs/vnode.c
 SRCS+=$(KTOP)/vm/addrspace.c
 SRCS+=$(KTOP)/vm/coremap.c
 SRCS+=$(KTOP)/vm/kmalloc.c
+SRCS+=$(KTOP)/vm/pt.c
 SRCS+=$(KTOP)/vm/uw-vmstats.c
 SRCS+=$(KTOP)/vm/vm.c
 SRCS.MACHINE.mips+=$(TOP)/common/gcc-millicode/adddi3.c

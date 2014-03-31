@@ -8,6 +8,7 @@
 #include <mips/tlb.h>
 #include <addrspace.h>
 #include <vm.h>
+#include <pt.h>
 
 /*
  * Dumb MIPS-only "VM system" that is intended to only be just barely
@@ -39,7 +40,6 @@ static
 paddr_t
 getppages(unsigned long npages)
 {
-	if(!boot){
 	paddr_t addr;
     
 	spinlock_acquire(&stealmem_lock);
@@ -48,9 +48,6 @@ getppages(unsigned long npages)
     
 	spinlock_release(&stealmem_lock);
 	return addr;
-	}else{
-		return VADDR_TO_KPADDR(coremap_alloc(npages));
-	}
 }
 
 /* Allocate/free some kernel-space virtual pages */
@@ -169,12 +166,14 @@ vm_fault(int faulttype, vaddr_t faultaddress)
      return EFAULT;
      }*/
     
-    paddr = getppages(1);
+   
     
-    if (!page_exist(faultaddress)){
+    if (!page_exist(as->page_table, faultaddress)){
         
         times = 0;
         off_t offset;
+        
+        paddr = getppages(1);
         
         if ( faultaddress >= as -> vbase1 && faultaddress <= as -> vbase1 + as ->memsize1){
             
@@ -207,6 +206,8 @@ vm_fault(int faulttype, vaddr_t faultaddress)
             
         }
         
+        pabe_table_add(as -> page_table, faultaddress, paddr);
+        
         
     }
     
@@ -229,9 +230,16 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		return 0;
 	}
     
-	kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
-	splx(spl);
-	return EFAULT;
+    int victim_index = tlb_get_rr_victim();
+    ehi = faultaddress;
+    elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+    DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
+    tlb_write(ehi, elo, victim_index);
+    splx(spl);
+    return 0;
+	//kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
+	//splx(spl);
+	//return EFAULT;
 }
 
 

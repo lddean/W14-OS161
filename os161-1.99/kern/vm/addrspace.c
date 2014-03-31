@@ -8,6 +8,7 @@
 #include <mips/tlb.h>
 #include <addrspace.h>
 #include <vm.h>
+#include <pt.h>
 
 /*
  * Dumb MIPS-only "VM system" that is intended to only be just barely
@@ -22,7 +23,7 @@
 /*
  * Wrap rma_stealmem in a spinlock.
  */
-static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
+//static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
 
 
 struct addrspace *
@@ -49,8 +50,8 @@ as_create(void)
     as->filesize2 = 0;
     as->memsize2 = 0;
     
-    executable = 0;
-    
+    as->executable = 0;
+    as -> page_table = page_table_create();
     as->vnode = NULL;
     
     
@@ -139,17 +140,17 @@ as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, off_t offset,
 	kprintf("dumbvm: Warning: too many regions\n");
 	return EUNIMP;
 }
-
+/*
 static
 void
 as_zero_region(paddr_t paddr, unsigned npages)
 {
 	bzero((void *)PADDR_TO_KVADDR(paddr), npages * PAGE_SIZE);
 }
-
+*/
 int
 as_prepare_load(struct addrspace *as)
-{
+{/*
 	KASSERT(as->as_pbase1 == 0);
 	KASSERT(as->as_pbase2 == 0);
 	KASSERT(as->as_stackpbase == 0);
@@ -163,16 +164,18 @@ as_prepare_load(struct addrspace *as)
 	if (as->as_pbase2 == 0) {
 		return ENOMEM;
 	}
-    
-	as->as_stackpbase = getppages(DUMBVM_STACKPAGES);
-	if (as->as_stackpbase == 0) {
-		return ENOMEM;
-	}
-	
+    */
+//	as->as_stackpbase = getppages(DUMBVM_STACKPAGES);
+//	if (as->as_stackpbase == 0) {
+//		return ENOMEM;
+//	}
+	/*
 	as_zero_region(as->as_pbase1, as->as_npages1);
 	as_zero_region(as->as_pbase2, as->as_npages2);
 	as_zero_region(as->as_stackpbase, DUMBVM_STACKPAGES);
+    */
     
+    (void)as;
 	return 0;
 }
 
@@ -206,6 +209,13 @@ as_copy(struct addrspace *old, struct addrspace **ret)
 	new->as_npages1 = old->as_npages1;
 	new->as_vbase2 = old->as_vbase2;
 	new->as_npages2 = old->as_npages2;
+    new->offset1 = old->offset1;
+    new->filesize1 = old->filesize1;
+    new->memsize1 = old->memsize1;
+    new->offset2 = old->offset2;
+    new->filesize2 = old->filesize2;
+    new->memsize2 = old->memsize2;
+    
     
 	/* (Mis)use as_prepare_load to allocate some physical memory. */
 	if (as_prepare_load(new)) {
@@ -213,21 +223,21 @@ as_copy(struct addrspace *old, struct addrspace **ret)
 		return ENOMEM;
 	}
     
-	KASSERT(new->as_pbase1 != 0);
-	KASSERT(new->as_pbase2 != 0);
+//	KASSERT(new->as_pbase1 != 0);
+//	KASSERT(new->as_pbase2 != 0);
 	KASSERT(new->as_stackpbase != 0);
     
-	memmove((void *)PADDR_TO_KVADDR(new->as_pbase1),
-            (const void *)PADDR_TO_KVADDR(old->as_pbase1),
-            old->as_npages1*PAGE_SIZE);
+//	memmove((void *)PADDR_TO_KVADDR(new->as_pbase1),
+//            (const void *)PADDR_TO_KVADDR(old->as_pbase1),
+//            old->as_npages1*PAGE_SIZE);
     
-	memmove((void *)PADDR_TO_KVADDR(new->as_pbase2),
-            (const void *)PADDR_TO_KVADDR(old->as_pbase2),
-            old->as_npages2*PAGE_SIZE);
+//	memmove((void *)PADDR_TO_KVADDR(new->as_pbase2),
+//            (const void *)PADDR_TO_KVADDR(old->as_pbase2),
+//            old->as_npages2*PAGE_SIZE);
     
-	memmove((void *)PADDR_TO_KVADDR(new->as_stackpbase),
-            (const void *)PADDR_TO_KVADDR(old->as_stackpbase),
-            DUMBVM_STACKPAGES*PAGE_SIZE);
+//	memmove((void *)PADDR_TO_KVADDR(new->as_stackpbase),
+//            (const void *)PADDR_TO_KVADDR(old->as_stackpbase),
+//            DUMBVM_STACKPAGES*PAGE_SIZE);
 	
 	*ret = new;
 	return 0;
