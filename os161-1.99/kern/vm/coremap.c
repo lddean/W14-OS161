@@ -9,6 +9,16 @@
 #include <addrspace.h>
 #include <coremap.h>
 
+// get the victim to swap for coremap
+// we use FIFO to make it simple
+int coremap_get_victim(void){
+	int victim;
+	static unsigned int next_victim = 0;
+	victim = next_victim;
+	next_victim = (next_victim + 1) % core_size;
+	return victim;
+}
+
 // set up coremap
 void coremap_init(void){
 	//corelock = lock_create("coremap");
@@ -66,7 +76,18 @@ bool coremap_check_pages(int index, int npages){
 	}
 	return true;
 }
-	
+
+// get the next available free pages
+int coremap_get_free(int index){
+        for(int i=index; i<core_size; i++){
+                struct core_page* current = pages+i;
+                if(current->state == 1){ // it is not free, return false
+                        return i;
+                }
+        }
+        return -1;
+}
+
 // mark n consecutive pages as occupied, zero out physical/virtual addresses & return the first virtual address
 paddr_t coremap_occupy_pages(int index, int npages){
 	for(int i=index; i<index+npages; i++){
@@ -84,29 +105,48 @@ paddr_t coremap_occupy_pages(int index, int npages){
 	return valid->pa;
 }
 
+// get npages by replacing n pages
+/*paddr_t coremap_occupy_victim(int npages){
+	int start = coremap_get_victim();
+	for(int i=start; i<start+npages; i++){
+		struct core_page* current = pages+i;
+
+                current->as = curproc_getas();
+		current->state = 2; // mark it dirty(occupied)
+	}
+	struct core_page* valid = pages+index;
+
+	// zero out virtual address when we allocate
+        //bzero((void *)valid->pa, npages * PAGE_SIZE);
+        bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
+
+	return valid->pa;
+}*/
+
 // allocate n pages in physical memory
 paddr_t coremap_alloc(int n){
 
-	//lock_acquire(corelock);	
+	lock_acquire(corelock);	
 	//int spl = splhigh();
 
 	int i=0;
 	while(i < page_size){
 		if(!coremap_check_pages(i, n)){
-			i = i+n;
+			i = coremap_get_free(i);
 		}else{
+			lock_release(corelock);
 			return coremap_occupy_pages(i, n);
 		}
 	}
 	// if it reaches here, should be a problem
-	//lock_release(corelock);
+	lock_release(corelock);
 	//splx(spl);
 	return -1;
 }
 
 // free coremap 
 void coremap_free(vaddr_t addr){
-	//lock_acquire(corelock);
+	lock_acquire(corelock);
 	//int spl = splhigh();
 	int start=0; // start point to free
 
@@ -128,9 +168,9 @@ void coremap_free(vaddr_t addr){
 		current->state = 1; // flag it to free
 	}
 
-	//lock_release(corelock);
+	lock_release(corelock);
 	//splx(spl);
-	// this is for shoot-down?
+	// this is for shoot-down? need modify later
 	as_activate();
 }
 

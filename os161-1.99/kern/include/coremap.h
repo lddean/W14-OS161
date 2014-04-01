@@ -1,4 +1,4 @@
-#if OPT_A2
+#if OPT_A3
 #ifndef _COREMAP_H
 #define _COREMAP_H
 
@@ -40,8 +40,10 @@ struct lock *corelock; // lock for free/alloc
  *	coremap_free - free addr and related addresses(from length)
 */
 
+int coremap_get_victim(void);
 void coremap_init(void);
 bool coremap_check_pages(int index, int pages);
+int coremap_get_free(int index);
 paddr_t coremap_occupy_pages(int index, int pages);
 paddr_t coremap_alloc(int n);
 void coremap_free(vaddr_t addr);
