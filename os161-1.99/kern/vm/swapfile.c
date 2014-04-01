@@ -95,6 +95,9 @@ void swap_out(paddr_t pa, struct addrspace* as){
 
 	// update the record as well
 	update_record(insert);
+
+	// tell page table to make them invalid
+	page_invalid(as->page_table, pa);
 	
 	int offset = check_offset(pa, as);
 	write_page(pa, offset);

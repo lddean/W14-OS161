@@ -16,6 +16,27 @@ struct page_table* page_table_create(void){
 	return pgtbl;
 }
 
+
+// destroy a file table
+void page_table_destroy(struct page_table* pt){
+
+        struct array* pages = pt->pages;
+
+         //KASSERT(fd != NULL); // not null to free
+        int size = array_num(pages);
+
+        for(int i=0; i<size; i++){
+                //file_dst_destroy(array_get(fd, i)); // prevent files2 at loop 6
+                kfree(array_get(pages, i));
+        }
+
+        //kfree(fd);
+        // destroy array and the pointer
+        //array_destroy(fd);
+        kfree(pt);
+}
+
+
 // create a single page
 struct page* page_create(vaddr_t vaddr, paddr_t paddr){
 	struct page* new = (struct page *)kmalloc(sizeof(struct page));
@@ -68,5 +89,18 @@ paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr){
 		}
 	}
 	return -1; //no page with vaddr exists
+}
+
+// ********************************** Tom adds the following
+// make a page invalid given its physical address
+void page_invalid(struct page_table* pgtbl, paddr_t pa){
+        struct page* pg;
+        int size = array_num(pgtbl->pages);
+        for (int i=0; i<size; i++){
+                pg = array_get(pgtbl->pages, i);
+                if (pg->pa == pa){
+			pg->valid = 0;
+                }
+        }
 }
 

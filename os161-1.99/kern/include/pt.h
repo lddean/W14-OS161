@@ -20,7 +20,7 @@ struct page{
 	vaddr_t va;
 	paddr_t pa;
 	int segment; //1 - code, 2 - data, 3 - stack
-	int valid;
+	int valid; // 0 - invalid, 1 - valid
 };
 
 //structure for page table
@@ -34,5 +34,8 @@ int page_exist(struct page_table* pgtbl, vaddr_t vaddr);
 void page_table_add(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr);	
 paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr);
 
+// TOM adds these functions
+void page_invalid(struct page_table* pgtbl, paddr_t pa);
+void page_table_destroy(struct page_table* pt);
 #endif
 //#endif

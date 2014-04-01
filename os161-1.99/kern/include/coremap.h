@@ -14,6 +14,7 @@
 #include <file_descriptor.h>
 #include <synch.h>
 #include <addrspace.h>
+#include <swapfile.h>
 
 struct core_page{
         //vaddr_t va; // virtual address
@@ -43,9 +44,14 @@ struct lock *corelock; // lock for free/alloc
 int coremap_get_victim(void);
 void coremap_init(void);
 bool coremap_check_pages(int index, int pages);
+
+void coremap_occupy_swap(int index, int npages);
+paddr_t coremap_occupy_victim(int npages);
+
 int coremap_get_free(int index);
 paddr_t coremap_occupy_pages(int index, int pages);
 paddr_t coremap_alloc(int n);
+
 void coremap_free(vaddr_t addr);
 
 #endif
