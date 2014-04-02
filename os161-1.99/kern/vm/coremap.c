@@ -95,6 +95,7 @@ paddr_t coremap_occupy_pages(int index, int npages){
 
                 current->as = curproc_getas();
 		current->state = 2; // mark it dirty(occupied)
+                current->length = npages;
 	}
 	struct core_page* valid = pages+index;
 
@@ -114,6 +115,7 @@ void coremap_occupy_swap(int index, int npages){
 		// this is swap out to SWAPFILE
 		swap_out(current->pa, current->as);
                 current->as = curproc_getas();
+                current->length = npages;
 		current->state = 2; // mark it dirty(occupied)
 	}
 	// zero out virtual address when we allocate
@@ -121,7 +123,7 @@ void coremap_occupy_swap(int index, int npages){
         bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
 }
 
-// get npages by replacing n pages
+// get npages by replacing n pages(i.e. swap out to make it free)
 paddr_t coremap_occupy_victim(int npages){
 	int start = coremap_get_victim();
 	for(int i=start; i<start+npages; i++){
@@ -149,6 +151,7 @@ paddr_t coremap_occupy_victim(int npages){
 
 // allocate n pages in physical memory
 paddr_t coremap_alloc(int n){
+	//kprintf("CORE_ ALLOC\n");	
 
 	lock_acquire(corelock);	
 	//int spl = splhigh();
@@ -156,7 +159,15 @@ paddr_t coremap_alloc(int n){
 	int i=0;
 	while(i < page_size){
 		if(!coremap_check_pages(i, n)){
-			i = coremap_get_free(i);
+			// whether the coremap_get free actually increase
+			int potential_next = coremap_get_free(i);
+			if(i == potential_next){
+				i++;
+			}else{
+				i = potential_next;
+			}
+			//i++;
+	//kprintf("you want %d and give %d\n", n, i);
 		}else{
 			lock_release(corelock);
 			return coremap_occupy_pages(i, n);
@@ -186,6 +197,7 @@ void coremap_free(vaddr_t addr){
 
  	//use START point to free LENGTH memories	
 	int length = current->length;
+//kprintf("!!!! free start %d & length %d\n", start, length);
 	for(int i=start; i<start + length; i++){
 		current = pages+i;
 		current->as = NULL;
@@ -198,6 +210,8 @@ void coremap_free(vaddr_t addr){
 	as_activate();
 }
 /*
+// swap in to core map
+// 1. swap out the original physical address, 2.
 void coremap_occupy(vaddr_t addr){
 	lock_acquire(corelock);
 	//int spl = splhigh();

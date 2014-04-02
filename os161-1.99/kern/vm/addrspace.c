@@ -61,6 +61,7 @@ as_create(void)
 void
 as_destroy(struct addrspace *as)
 {
+	page_table_destroy(as->page_table);
 	kfree(as);
 }
 

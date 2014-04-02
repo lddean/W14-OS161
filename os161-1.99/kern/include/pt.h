@@ -7,6 +7,7 @@
 #include <lib.h>
 #include <array.h>
 #include <synch.h>
+#include <coremap.h>
 
 /*#include "opt-A3.h"
 #include <kern/errno.h>

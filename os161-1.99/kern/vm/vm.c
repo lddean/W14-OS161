@@ -43,22 +43,22 @@ paddr_t
 getppages(unsigned long npages)
 {
 
-kprintf("in getppages\n");
+//kprintf("in getppages\n");
 	if(!boot){
 	paddr_t addr;
     
 	spinlock_acquire(&stealmem_lock);
     
 	addr = ram_stealmem(npages);
-kprintf("after ram-stealmem\n");
+//kprintf("after ram-stealmem\n");
 	spinlock_release(&stealmem_lock);
 	return addr;
 	}else{
-	kprintf("here else\n");
+	//kprintf("here else\n");
 		paddr_t addr;
-	kprintf("before the alloc\n");
+	//kprintf("before the alloc\n");
 		addr = coremap_alloc(npages);
-	kprintf("after the alloc\n");
+	//kprintf("after the alloc\n");
 		return addr;
 	}
 }
@@ -211,7 +211,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
 int
 vm_fault(int faulttype, vaddr_t faultaddress)
 {
-	kprintf("Begin vm_fault\n");
+	//kprintf("Begin vm_fault\n");
 	vaddr_t vbase1, vtop1, vbase2, vtop2, stackbase, stacktop;
 	paddr_t paddr;
 	int i;
@@ -235,7 +235,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	    default:
             return EINVAL;
 	}
-     kprintf("check if curproc is NULL\n");
 
 	if (curproc == NULL) {
 		 kprintf("curproc is NULL\n");
@@ -249,7 +248,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	}
 
 	as = curproc_getas();
-	 kprintf("after curproc gets as\n");
 
 	if (as == NULL) {
 	  kprintf("as is NULL\n");
@@ -260,10 +258,8 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		 */
 		return EFAULT;
 	}
-     kprintf("after as gets checked for NULL\n");
 
 	/* Assert that the address space has been set up properly. */
-	kprintf("as_vbase1: %d\n", as->as_vbase1);// vbase1 = 0
 	KASSERT(as->as_vbase1 != 0);
 	//KASSERT(as->as_pbase1 != 0);
 	KASSERT(as->as_npages1 != 0); 
@@ -273,7 +269,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	KASSERT((as->as_vbase1 & PAGE_FRAME) == as->as_vbase1);
 	KASSERT((as->as_vbase2 & PAGE_FRAME) == as->as_vbase2);
 	KASSERT((as->as_stackpbase & PAGE_FRAME) == as->as_stackpbase);
-     kprintf("after checking if page frame and stackbase are aligned\n");
 	vbase1 = as->as_vbase1;
 	vtop1 = vbase1 + as->as_npages1 * PAGE_SIZE;
 	vbase2 = as->as_vbase2;
@@ -295,7 +290,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
      }*/
     
    
-    kprintf ("found new page entry\n");
     if (!page_exist(as->page_table, faultaddress)){
          
         times = 0;
@@ -346,7 +340,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
 	/* Disable interrupts on this CPU while frobbing the TLB. */
 	spl = splhigh();
-   	kprintf("check TLB\n"); 
+   	//kprintf("check TLB\n"); 
 	for (i=0; i<NUM_TLB; i++) {
 		tlb_read(&ehi, &elo, i);
 		if (elo & TLBLO_VALID) {
@@ -356,19 +350,17 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
 		tlb_write(ehi, elo, i);
-		kprintf("11111\n");
+		//kprintf("11111\n");
 		splx(spl);
-		kprintf("22222\n");
+		//kprintf("22222\n");
 		return 0;
 	}
-    kprintf("TLB is full");
     int victim_index = tlb_get_rr_victim();
     ehi = faultaddress;
     elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
     DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
     tlb_write(ehi, elo, victim_index);
     splx(spl);
-   kprintf("about to exit");
     return 0;
 	//kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
 	//splx(spl);

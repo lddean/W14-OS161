@@ -25,12 +25,16 @@ void page_table_destroy(struct page_table* pt){
          //KASSERT(fd != NULL); // not null to free
         int size = array_num(pages);
 
+//kprintf("PT Destroy\n");
         for(int i=0; i<size; i++){
+//kprintf("PT Destroy %d\n", i);
+		struct page* page = array_get(pages, i);
+		paddr_t pa = page->pa;
+		coremap_free((PADDR_TO_KVADDR(pa)));
                 //file_dst_destroy(array_get(fd, i)); // prevent files2 at loop 6
                 kfree(array_get(pages, i));
         }
 
-        //kfree(fd);
         // destroy array and the pointer
         //array_destroy(fd);
         kfree(pt);
