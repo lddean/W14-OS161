@@ -17,30 +17,6 @@ struct page_table* page_table_create(void){
 }
 
 
-// destroy a file table
-void page_table_destroy(struct page_table* pt){
-
-        struct array* pages = pt->pages;
-
-         //KASSERT(fd != NULL); // not null to free
-        int size = array_num(pages);
-
-//kprintf("PT Destroy\n");
-        for(int i=0; i<size; i++){
-//kprintf("PT Destroy %d\n", i);
-		struct page* page = array_get(pages, i);
-		paddr_t pa = page->pa;
-		coremap_free((PADDR_TO_KVADDR(pa)));
-                //file_dst_destroy(array_get(fd, i)); // prevent files2 at loop 6
-                kfree(array_get(pages, i));
-        }
-
-        // destroy array and the pointer
-        //array_destroy(fd);
-        kfree(pt);
-}
-
-
 // create a single page
 struct page* page_create(vaddr_t vaddr, paddr_t paddr){
 	struct page* new = (struct page *)kmalloc(sizeof(struct page));
@@ -50,7 +26,7 @@ struct page* page_create(vaddr_t vaddr, paddr_t paddr){
 	new->va = vaddr;
 	new->pa = paddr;
 	new->segment = -1;
-	new->valid = 0; //not valid -> ..
+	new->valid = 1; //not valid -> ..
 	return new;
 }
 
@@ -60,7 +36,11 @@ int page_exist(struct page_table* pgtbl, vaddr_t vaddr){
 	int size = array_num(pgtbl->pages);
 	for (int i=0; i<size; i++){
 		pg = array_get(pgtbl->pages, i);
-		if (pg->va == vaddr){
+		if (pg->va == vaddr && (pg->valid)){
+			return 1;
+		}else if(pg->va == vaddr){
+			swap_in(pg->va);
+			pg->valid = 1;
 			return 1;
 		}
 	}
@@ -104,7 +84,33 @@ void page_invalid(struct page_table* pgtbl, paddr_t pa){
                 pg = array_get(pgtbl->pages, i);
                 if (pg->pa == pa){
 			pg->valid = 0;
+			// invalidate the tlb as well
+			int i = tlb_probe(pg->va, pg->pa);
+			tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), i);
                 }
         }
+}
+
+// destroy a file table
+void page_table_destroy(struct page_table* pt){
+
+        struct array* pages = pt->pages;
+
+         //KASSERT(fd != NULL); // not null to free
+        int size = array_num(pages);
+
+//kprintf("PT Destroy\n");
+        for(int i=0; i<size; i++){
+//kprintf("PT Destroy %d\n", i);
+		struct page* page = array_get(pages, i);
+		paddr_t pa = page->pa;
+		coremap_free((PADDR_TO_KVADDR(pa)));
+                //file_dst_destroy(array_get(fd, i)); // prevent files2 at loop 6
+                kfree(array_get(pages, i));
+        }
+
+        // destroy array and the pointer
+        //array_destroy(fd);
+        kfree(pt);
 }
 

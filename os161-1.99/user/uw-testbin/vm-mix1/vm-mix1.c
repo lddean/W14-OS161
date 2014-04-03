@@ -107,12 +107,14 @@ do_work(unsigned int start)
   printf("Checking uninitialized array2\n");
 	/* check the uninitialized array2 before initialization */
 	for (i=0; i<ELEMS; i++) {
+			//printf("unini 2 %d\n", i);
 		if (array2[i] != 0) {
 			printf("FAILED in file %s at line %d: array2[%d] = %u != %d\n", __FILE__, __LINE__, i, array2[i], 0);
 			exit(1);
 		}
 	}
 
+  printf("doing STACK_ARRAY  array2\n");
 	for (i=0; i<STACK_ARRAY_ELEMS; i++) {
 		stack_array[i] = i * 1000;
 	}

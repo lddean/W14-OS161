@@ -54,5 +54,6 @@ paddr_t coremap_alloc(int n);
 
 void coremap_free(vaddr_t addr);
 
+void coremap_swapin(paddr_t pa);
 #endif
 #endif

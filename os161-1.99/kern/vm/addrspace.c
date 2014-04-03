@@ -61,6 +61,9 @@ as_create(void)
 void
 as_destroy(struct addrspace *as)
 {
+	//kfree((void*)as->as_stackpbase);
+	// free the coremap & destroy page table(they both use getppages to get physical memory)
+	coremap_free(PADDR_TO_KVADDR(as->as_stackpbase));
 	page_table_destroy(as->page_table);
 	kfree(as);
 }

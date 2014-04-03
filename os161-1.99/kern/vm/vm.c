@@ -34,6 +34,9 @@ bool boot=false;
 void
 vm_bootstrap(void)
 {
+kprintf("swap init\n");
+	swap_init();
+kprintf("coremap init\n");
 	coremap_init();
 	boot = true;
 	/* Do nothing. */
