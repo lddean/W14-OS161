@@ -33,6 +33,7 @@ struct page_table* page_table_create(void);
 struct page* page_create(vaddr_t vaddr, paddr_t paddr);
 int page_exist(struct page_table* pgtbl, vaddr_t vaddr);
 void page_table_add(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr);	
+void change_page_valid(struct page_table* pgtbl, vaddr_t vaddr, int validBit);
 paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr);
 
 // TOM adds these functions

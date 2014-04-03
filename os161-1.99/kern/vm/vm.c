@@ -163,9 +163,9 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
             check ++;
             
         }
-        kprintf("the vop_read in loading page\n");
+        //kprintf("the vop_read in loading page\n");
         result = VOP_READ(v, &u);
-        kprintf("finished vop_read in loading page\n");
+        //kprintf("finished vop_read in loading page\n");
         check ++;
         
         if (result) {
@@ -224,6 +224,8 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
     int result;
     
+    int segment = 0;
+    
 	faultaddress &= PAGE_FRAME;
     
 	DEBUG(DB_VM, "dumbvm: fault: 0x%x\n", faultaddress);
@@ -231,7 +233,9 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	switch (faulttype) {
 	    case VM_FAULT_READONLY:
             /* We always create pages read-write, so we can't get this */
-            panic("dumbvm: got VM_FAULT_READONLY\n");
+            //panic("DUMBVM!!!!!!!!!!!!!!!!!!!!!!!!!!!!: got VM_FAULT_READONLY\n");
+            kprintf("VM_FAULT_READONLY\n");
+            return EFAULT;
 	    case VM_FAULT_READ:
 	    case VM_FAULT_WRITE:
             break;
@@ -249,7 +253,8 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		 */
 		return EFAULT;
 	}
-
+	//kprintf("Begin2 vm_fault\n");
+	
 	as = curproc_getas();
 
 	if (as == NULL) {
@@ -294,14 +299,14 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
    
     if (!page_exist(as->page_table, faultaddress)){
-         
+        
         times = 0;
         off_t offset;
         
         paddr = getppages(1);
         
         if ( faultaddress >= as -> as_vbase1 && faultaddress <= as -> as_vbase1 + as ->memsize1){
-            
+            segment=1;
             times = times + 1;
             offset = faultaddress - as -> as_vbase1 + as -> offset1;
             
@@ -335,7 +340,8 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         
         
     }
-    
+    //kprintf("Begin3 vm_fault\n");
+	
     paddr = get_paddr(as->page_table, faultaddress);
     
 	/* make sure it's page-aligned */
@@ -350,7 +356,15 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 			continue;
 		}
 		ehi = faultaddress;
-		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+		//elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+		if (segment){
+			//kprintf("SEGMENT - TEXT1\n");
+			elo = (paddr | TLBLO_VALID); //&(~TLBLO_DIRTY);
+		}
+		else{
+		
+			elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+		}
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
 		tlb_write(ehi, elo, i);
 		//kprintf("11111\n");
@@ -360,9 +374,21 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	}
     int victim_index = tlb_get_rr_victim();
     ehi = faultaddress;
-    elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+    
+    //change_page_valid(as->page_table, faultaddress, 0);
+    //page_invalid(as->page_table, paddr, victim_index);
+    
+    //elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+    if (segment){
+    	kprintf("SEGMENT - TEXT2\n");
+		elo = paddr;  //&(~TLBLO_DIRTY);
+	}
+	else{
+		elo = paddr | TLBLO_DIRTY;
+	}
     DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
     tlb_write(ehi, elo, victim_index);
+    
     splx(spl);
     return 0;
 	//kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");

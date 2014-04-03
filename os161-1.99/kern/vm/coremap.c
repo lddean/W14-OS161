@@ -186,7 +186,7 @@ paddr_t coremap_alloc(int n){
 			//i++;
 	//kprintf("you want %d and give %d\n", n, i);
 		}else{
-	kprintf("you want %d and give %d &  page limit %d\n", n, i, page_size);
+	//kprintf("you want %d and give %d &  page limit %d\n", n, i, page_size);
 			lock_release(corelock);
 			return coremap_occupy_pages(i, n);
 		}
@@ -218,7 +218,7 @@ void coremap_free(vaddr_t addr){
 
  	//use START point to free LENGTH memories	
 	int length = current->length;
-kprintf("!!!! free start %d & length %d\n", start, length);
+//kprintf("!!!! free start %d & length %d\n", start, length);
 	for(int i=start; i<start + length; i++){
 		current = pages+i;
 		current->as = NULL;

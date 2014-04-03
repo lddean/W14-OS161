@@ -26,7 +26,7 @@ struct page* page_create(vaddr_t vaddr, paddr_t paddr){
 	new->va = vaddr;
 	new->pa = paddr;
 	new->segment = -1;
-	new->valid = 1; //not valid -> ..
+	new->valid = 1; //valid
 	return new;
 }
 
@@ -62,7 +62,19 @@ void page_table_add(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr){
     
 	array_add(pgtbl->pages, new, &result);
 }
-	
+
+void change_page_valid(struct page_table* pgtbl, vaddr_t vaddr, int validBit){
+	struct page* pg;
+	int size = array_num(pgtbl->pages);
+	for (int i=0; i<size; i++){
+		pg = array_get(pgtbl->pages, i);
+		if (pg->va == vaddr){
+			pg->valid = validBit;
+		}
+	}
+	//return -1; //no page with vaddr exists
+}
+
 paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr){
 	struct page* pg;
 	int size = array_num(pgtbl->pages);
@@ -83,14 +95,40 @@ void page_invalid(struct page_table* pgtbl, paddr_t pa){
         for (int i=0; i<size; i++){
                 pg = array_get(pgtbl->pages, i);
                 if (pg->pa == pa){
-			pg->valid = 0;
-			// invalidate the tlb as well
-			int i = tlb_probe(pg->va, pg->pa);
-			tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), i);
+					pg->valid = 0;
+					// invalidate the tlb as well
+					int i = tlb_probe(pg->va, pg->pa);
+					tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), i);
                 }
         }
 }
-
+/*
+void page_invalid(struct page_table* pgtbl, paddr_t pa, int index){
+		if (index == -1){
+		struct page* pg;
+        int size = array_num(pgtbl->pages);
+        for (int i=0; i<size; i++){
+                pg = array_get(pgtbl->pages, i);
+                if (pg->pa == pa){
+					pg->valid = 0;
+					// invalidate the tlb as well
+					int i = tlb_probe(pg->va, pg->pa);
+					tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), i);
+                }
+        }
+        }
+        else{
+        struct page* pg;
+        pg = array_get(pgtbl->pages, index);
+        if (pg->pa == pa){
+			pg->valid = 0;
+			// invalidate the tlb as well
+			int i = tlb_probe(pg->va, pg->pa);
+			tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), index);
+        }
+        }
+}
+*/
 // destroy a file table
 void page_table_destroy(struct page_table* pt){
 
