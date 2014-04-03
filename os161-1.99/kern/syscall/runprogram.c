@@ -167,7 +167,7 @@ runprogram(char *progname, char **args,unsigned long argc)
 		stackptr = stackptr - stackptr % 8;
 
 	}
-
+    kprintf("enter_new_process in runprogram.c\n");
 	/* Warp to user mode. */
 	enter_new_process(count /*argc*/,  (userptr_t)n/*userspace addr of argv*/,
 			  stackptr, entrypoint);

@@ -78,6 +78,7 @@ as_activate(void)
 #ifdef UW
     /* Kernel threads don't have an address spaces to activate */
 #endif
+    //kprintf("clean the TLB!!!!!!!!!!\n");
 	if (as == NULL) {
 		return;
 	}
@@ -88,6 +89,8 @@ as_activate(void)
 	for (i=0; i<NUM_TLB; i++) {
 		tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), i);
 	}
+    
+    //kprintf("cleaned the TLB!!!!!!!!!!!\n");
     
 	splx(spl);
 }

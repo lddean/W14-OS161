@@ -296,7 +296,11 @@ vm_fault(int faulttype, vaddr_t faultaddress)
      else {
      return EFAULT;
      }*/
-    
+    if ( faultaddress >= as -> as_vbase1 && faultaddress <= as -> as_vbase1 + as ->memsize1){
+        segment = 1;
+    }else{
+        segment = 2;
+    }
    
     if (!page_exist(as->page_table, faultaddress)){
         
@@ -306,7 +310,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         paddr = getppages(1);
         
         if ( faultaddress >= as -> as_vbase1 && faultaddress <= as -> as_vbase1 + as ->memsize1){
-            segment=1;
+           // segment=1;
             times = times + 1;
             offset = faultaddress - as -> as_vbase1 + as -> offset1;
             
@@ -357,7 +361,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		}
 		ehi = faultaddress;
 		//elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
-		if (segment){
+		if (segment == 1){
 			//kprintf("SEGMENT - TEXT1\n");
 			elo = (paddr | TLBLO_VALID); //&(~TLBLO_DIRTY);
 		}
@@ -379,7 +383,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     //page_invalid(as->page_table, paddr, victim_index);
     
     //elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
-    if (segment){
+    if (segment == 1){
     	kprintf("SEGMENT - TEXT2\n");
 		elo = paddr;  //&(~TLBLO_DIRTY);
 	}

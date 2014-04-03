@@ -52,7 +52,7 @@ read_data(void)
 	unsigned int i = 0;
 
 	for (i=0; i<SIZE; i+= PAGE_SIZE) {
-		if (array[i] != i) {
+		if (array[i] != 0) {
 			printf("FAILED array[%d] = %u != %d\n", i, array[i], i);
 			exit(1);
 		}
@@ -69,9 +69,9 @@ main()
 	  call_all();
 	  write_data();
 	  call_all();
-	  read_data();
+	//  read_data();
 	}
-
+    
 	/* This won't hopefully return becasue it crashes */
 	write_to_code();
 	exit(0);
