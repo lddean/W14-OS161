@@ -19,24 +19,27 @@
 struct vnode *swap_file;
 // duplicate build-int one for now 
 //struct array* swap_record; 
-struct lock *swap_lock; // lock for read/write
+struct lock *swap_lock; // lock for /write
+struct lock *swap_wlock; // lock for write
+struct semaphore *sm;
 
 
 //static bool swap_boot = false;
 struct swap{
 	paddr_t pa;
+        int order; // order to tell different reference to physical addresses
 	struct addrspace* as;
 };
 
 int swap_init(void);
-int check_offset(paddr_t pa, struct addrspace* as);
+int check_offset(paddr_t pa, struct addrspace* as, int order);
 //void update_record(struct swap* insertion);
-void update_record(paddr_t pa, struct addrspace* as);
+int update_record(paddr_t pa, struct addrspace* as, int order);
 int read_page(paddr_t pa, int offset);
 
 // this is previous code, but page table does not have as
 //void swap_in(paddr_t pa, struct addrspace* as);
-void swap_in(paddr_t pa);
+void swap_in(paddr_t pa, int order);
 int write_page(paddr_t pa, int offset);
-void swap_out(paddr_t pa, struct addrspace* as);
+void swap_out(paddr_t pa, struct addrspace* as, int order);
 #endif

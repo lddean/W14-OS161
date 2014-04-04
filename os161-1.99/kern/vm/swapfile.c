@@ -15,6 +15,8 @@ int swap_init(void){
 	//swap_boot = true;
 	//swap_record = array_create();
 	swap_lock = lock_create("swap lock");
+	//sm = sem_create("swap", 2);
+	swap_wlock = lock_create("swap writelock");
 	
 	swap_record = kmalloc(sizeof(struct swap) * page_limit);
 	/*for(int unsigned i=0; i<page_limit; i++){
@@ -43,36 +45,55 @@ kprintf("open failsss\n");
 }
 
 // update the array and check whether it is hit the page size
-//void update_record(struct swap* insertion){
-void update_record(paddr_t pa, struct addrspace* as){
+int update_record(paddr_t pa, struct addrspace* as, int order){
+	// first let us check whether it is already there
+kprintf("oUPDATE pa %d order %d \n", pa, order);
+	 for(unsigned int i=0; i<free; i++){
+                struct swap check = swap_record[i];
+                if(check.as == as && check.pa == pa && check.order == order){
+kprintf("ALREADY there\n");
+                        return -1;
+                }
+        }
+	
 	// find the free spot to record
 	//struct swap* insert = array_get(swap_record, free);
+kprintf("we add \n");
 	struct swap insert = swap_record[free];
 	insert.pa = pa;
 	insert.as = as;
+	insert.order = order;
+	swap_record[free] = insert;
+//kprintf("update record %d\n", free);
+//printf("oUPDATE pa %d s_pa %d o_as %p & s_as %p \n", pa, insert.pa, as, insert.as);
 	free++;
-
 	//if(size == page_limit){
 	if(free == page_limit){
 		panic("Out of swap space");
 	}
 
+	return 0;
 	//unsigned ck;
 	//array_add(swap_record, &insertion, &ck);
 }
 
 // get offset from swap_record
-int check_offset(paddr_t pa, struct addrspace* as){
+int check_offset(paddr_t pa, struct addrspace* as, int order){
 	//int size = array_num(swap_record);
-	int size = page_size;
+	//int size = page_size;
 
-        for(int i=0; i<size; i++){
+        //for(int i=0; i<size; i++){
+        for(unsigned int i=0; i<free; i++){
 	 	//struct swap* check = array_get(swap_record, i);
+//kprintf("check offset %d \n", i);
 	 	struct swap check = swap_record[i];
-		if(check.as == as && check.pa == pa){
+//kprintf("orignal pa %d s_pa %d o_as %p & s_as %p order %d & s_order %d\n", pa, check.pa, as, check.as, order, check.order);
+		if(check.as == as && check.pa == pa && check.order == order){
 			return i;
 		}
         }
+	// if it goes here, it annot find offset, wrong
+	KASSERT(1 == 2);
 	return -1;
 }
 
@@ -93,15 +114,19 @@ int read_page(paddr_t pa, int offset){
 
 // swap in (read a page from SWAPFILE)
 //void swap_in(paddr_t pa, struct addrspace* as){
-void swap_in(paddr_t pa){
+void swap_in(paddr_t pa, int order){
 	lock_acquire(swap_lock);
+	//P(sm);
+kprintf("SWAP in\n");
 	
 	struct addrspace* as = curproc_getas();
 
-	coremap_swapin(pa);
+	coremap_swapin(pa, order);
 
-	int offset = check_offset(pa, as);
+	int offset = check_offset(pa, as, order);
+//kprintf("swap_in offset %d\n", offset);
 	read_page(pa, offset);
+	//V(sm);
 	lock_release(swap_lock);
 }
 
@@ -121,7 +146,8 @@ int write_page(paddr_t pa, int offset){
 }
 
 // swap out (write a page to SWAPFILE)
-void swap_out(paddr_t pa, struct addrspace* as){
+void swap_out(paddr_t pa, struct addrspace* as, int order){
+	lock_acquire(swap_wlock);
 	// boots up at the first swap out
 	if(!swap_boot){
 		//swap_init();
@@ -134,17 +160,23 @@ kprintf("open fails\n");
 	}
 	}
 	
-	lock_acquire(swap_lock);
+kprintf("SWAP OUT\n");
+	//lock_acquire(swap_lock);
 	/*struct swap* insert = kmalloc(sizeof(struct swap));
 	insert->pa = pa;
 	insert->as = as;*/
 	// update the record as well
-	update_record(pa, as);
+//kprintf("UPDATE record\n");
+	update_record(pa, as, order);
+//kprintf("done update && GOTO Page_INVAL \n");
 
 	// tell page table to make them invalid
-	page_invalid(as->page_table, pa);
+	page_invalid(as->page_table, pa, order);
 	
-	int offset = check_offset(pa, as);
+	int offset = check_offset(pa, as, order);
+//kprintf("offset %d\n", offset);
 	write_page(pa, offset);
-	lock_release(swap_lock);
+	//lock_release(swap_lock);
+	lock_release(swap_wlock);
+	//V(sm);
 }

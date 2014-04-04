@@ -344,7 +344,7 @@ main.o: ../../startup/main.c ../../include/types.h \
   ../../include/uio.h ../../include/kern/iovec.h ../../include/elf.h \
   includelinks/machine/elf.h includelinks/machine/vm.h \
   ../../include/mainbus.h ../../include/device.h ../../include/test.h \
-  ../../include/version.h autoconf.h opt-A0.h
+  ../../include/version.h ../../include/uw-vmstats.h autoconf.h opt-A0.h
 menu.o: ../../startup/menu.c ../../include/types.h \
   ../../include/kern/types.h includelinks/kern/machine/types.h \
   includelinks/machine/types.h ../../include/kern/errno.h \
@@ -726,7 +726,8 @@ addrspace.o: ../../vm/addrspace.c ../../include/addrspace.h \
   includelinks/mips/tlb.h ../../include/vm.h ../../include/pt.h opt-A3.h \
   ../../include/coremap.h ../../include/swapfile.h ../../include/uio.h \
   ../../include/kern/iovec.h ../../include/elf.h \
-  includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h
+  includelinks/machine/elf.h includelinks/machine/vm.h opt-dumbvm.h \
+  ../../include/uw-vmstats.h
 coremap.o: ../../vm/coremap.c ../../include/types.h \
   ../../include/kern/types.h includelinks/kern/machine/types.h \
   includelinks/machine/types.h ../../include/kern/errno.h \
@@ -824,7 +825,8 @@ vm.o: ../../vm/vm.c ../../include/kern/errno.h ../../include/vm.h \
   includelinks/mips/tlb.h ../../include/addrspace.h ../../include/pt.h \
   opt-A3.h ../../include/coremap.h ../../include/swapfile.h opt-dumbvm.h \
   ../../include/uio.h ../../include/kern/iovec.h ../../include/elf.h \
-  includelinks/machine/elf.h includelinks/machine/vm.h
+  includelinks/machine/elf.h includelinks/machine/vm.h \
+  ../../include/uw-vmstats.h
 adddi3.o: ../../../common/gcc-millicode/adddi3.c \
   ../../../common/gcc-millicode/longlong.h ../../include/types.h \
   ../../include/kern/types.h includelinks/kern/machine/types.h \

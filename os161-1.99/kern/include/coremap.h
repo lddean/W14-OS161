@@ -21,6 +21,7 @@ struct core_page{
         paddr_t pa; // physical address
 	struct addrspace* as;
 
+	int order; // order to tell different reference to physical addresses
         int state; // 0->fixed; 1->free; 2->dirty(occupied)
 	
 	int length; // length of pages(npages in alloc)
@@ -44,8 +45,9 @@ struct lock *corelock; // lock for free/alloc
 int coremap_get_victim(void);
 void coremap_init(void);
 bool coremap_check_pages(int index, int pages);
+int coremap_getorder(paddr_t pa);
 
-void coremap_occupy_swap(int index, int npages);
+void coremap_swap_out(int index, int npages);
 paddr_t coremap_occupy_victim(int npages);
 
 int coremap_get_free(int index);
@@ -54,6 +56,6 @@ paddr_t coremap_alloc(int n);
 
 void coremap_free(vaddr_t addr);
 
-void coremap_swapin(paddr_t pa);
+void coremap_swapin(paddr_t pa, int order);
 #endif
 #endif

@@ -53,6 +53,7 @@ void coremap_init(void){
                 current->as = curproc_getas();
                 //current->va = PADDR_TO_KVADDR(current_paddr); // get current virtual address
 
+		current->order = 0; // 0 refer
                 current->state = 0; // 0 is fixed
                 current->length = 0; // 0 is fixed
         }
@@ -65,6 +66,7 @@ void coremap_init(void){
                 current->as = curproc_getas();
                 //current->va = PADDR_TO_KVADDR(current_paddr); // get current virtual address
 
+		current->order = 0; // 0 refer
                 current->state = 1; // 1 is free
                 current->length = 0; // 1 is free
         }
@@ -85,7 +87,7 @@ bool coremap_check_pages(int index, int npages){
 int coremap_get_free(int index){
         for(int i=index; i<page_size; i++){
                 struct core_page* current = pages+i;
-                if(current->state == 1){ // it is not free, return false
+                if(current->state == 1){ // it is free, return index
                         return i;
                 }
         }
@@ -99,6 +101,7 @@ paddr_t coremap_occupy_pages(int index, int npages){
 
                 current->as = curproc_getas();
 		current->state = 2; // mark it dirty(occupied)
+		//current->order += 1; // increase the order 
                 current->length = npages;
 	}
 	struct core_page* valid = pages+index;
@@ -106,34 +109,51 @@ paddr_t coremap_occupy_pages(int index, int npages){
 	// zero out virtual address when we allocate(need to consider place later)
         //bzero((void *)valid->pa, npages * PAGE_SIZE);
 //kprintf("BZEROR IN OCCupy %p\n", (void *)PADDR_TO_KVADDR(valid->pa));
-        bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
+        //bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
 
 	return valid->pa;
 }
 
+// consume a paddr_t and return the counter
+int coremap_getorder(paddr_t pa){
+        for(int i=0; i<page_size; i++){
+                struct core_page* current = pages+i; 
+
+                if(current->pa == pa){
+                	//current->order += 1; // increase the order
+			return current->order;
+		}	
+
+        }
+kprintf("GET_order %d limit %d\n", pa, (pages+page_size-1)->pa);
+	KASSERT( true == false);
+	return -1;
+}
+
 // mark n consecutive pages & swap out as occupied, zero out physical/virtual addresses 
-void coremap_occupy_swap(int index, int npages){
+void coremap_swap_out(int index, int npages){
 	for(int i=index; i<index+npages; i++){
 kprintf("coremap occupy swap %d npage %d index %d\n", i, npages ,index);
 		struct core_page* current = pages+i;
 
 		// *********
 		// this is swap out to SWAPFILE
-		swap_out(current->pa, current->as);
-                current->as = curproc_getas();
-                current->length = npages;
-		current->state = 2; // mark it dirty(occupied)
+		swap_out(current->pa, current->as, current->order);
+                //current->as = curproc_getas();
+		current->order += 1; // increase the order 
+                current->length = 0;
+		current->state = 1; // mark it free
 
 	}
 	// zero out virtual address when we allocate
-	struct core_page* valid = pages+index;
-        bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
+	//struct core_page* valid = pages+index;
+        //bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
 }
 
 // get npages by replacing n pages(i.e. swap out to make it free)
 paddr_t coremap_occupy_victim(int npages){
-	kprintf("now should be in victim with npage %d\n", npages);
 	int start = coremap_get_victim();
+	kprintf("now should be in victim with npage %d start %d\n", npages, start);
 	int i=start;
 	while(i < start+npages){
 		kprintf("in while %d\n", i);
@@ -143,22 +163,28 @@ paddr_t coremap_occupy_victim(int npages){
 		// it is diry(swpped before), so call helper then continue
 		// notice i >>>> start+npages since we remove all length memory from record
 		if(current->state == 2){
+			// do not swap out length, but only npages
 			int length = current->length;
-			coremap_occupy_swap(i, length);
-			i = i+length;
-		}else{
+			coremap_swap_out(i, length);
+			//coremap_swap_out(i, npages);
+			//i = i+npages;
+		}else if(current->state == 1){
+		    kprintf("occupy available as\n");
        	         	current->as = curproc_getas();
                 	current->length = npages;
+                	//current->order += 1;
 			current->state = 2; // mark it dirty(occupied)
 			i++;
+		}else{
+			KASSERT(true == false);
 		}
 	}
 	struct core_page* valid = pages+start;
-	kprintf("done occupy %d with address %p\n", start, (void*) valid->pa);
+	kprintf("done occupy at %d with address %p while limit %p\n", start, (void*) valid->pa, (void*)(pages+page_size-1)->pa);
 
 	// zero out virtual address when we allocate
         //bzero((void *)valid->pa, npages * PAGE_SIZE);
-        bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
+        //bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
 
 	return valid->pa;
 }
@@ -186,15 +212,20 @@ paddr_t coremap_alloc(int n){
 			//i++;
 	//kprintf("you want %d and give %d\n", n, i);
 		}else{
-	//kprintf("you want %d and give %d &  page limit %d\n", n, i, page_size);
+			paddr_t rt = coremap_occupy_pages(i,n);
+	kprintf("you want %d and give %d &  page limit %d & give you %p\n", n, i, page_size, (void*)rt);
 			lock_release(corelock);
-			return coremap_occupy_pages(i, n);
+			return rt;
+			//return coremap_occupy_pages(i, n);
 		}
 	}
 
 	// !! SWAP FILE since it is full now
+	paddr_t rt = coremap_occupy_victim(n);
+	kprintf("use victim to find %d and gie you %p\n", rt, (void*)rt);
 	lock_release(corelock);
-	return coremap_occupy_victim(n);
+	return rt;
+	//return coremap_occupy_victim(n);
 	// if it reaches here, should be a problem
 	//splx(spl);
 	return -1;
@@ -223,6 +254,7 @@ void coremap_free(vaddr_t addr){
 		current = pages+i;
 		current->as = NULL;
 		current->state = 1; // flag it to free
+		current->length = 0;
 	}
 
 	lock_release(corelock);
@@ -233,7 +265,7 @@ void coremap_free(vaddr_t addr){
 
 // swap in to core map
 // 1. swap in the original physical address, 2.
-void coremap_swapin(paddr_t pa){
+void coremap_swapin(paddr_t pa, int order){
 	lock_acquire(corelock);
 
 	// loop to find starting point
@@ -241,8 +273,9 @@ void coremap_swapin(paddr_t pa){
 		struct core_page* current = pages+i;
 		if(current->pa == pa){
 			// !!! Swap OUT the current one to make it available
-			swap_out(current->pa, current->as);
+			swap_out(current->pa, current->as, current->order);
 			// we only swap in one page at one time
+			current->order = order;
 			current->length = 1; 
 			current->state = 2; 
 			break;

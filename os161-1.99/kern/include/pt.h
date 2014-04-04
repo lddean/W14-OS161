@@ -20,6 +20,7 @@
 struct page{
 	vaddr_t va;
 	paddr_t pa;
+        int order; // order to tell different reference to physical addresses
 	int segment; //1 - code, 2 - data, 3 - stack
 	int valid; // 0 - invalid, 1 - valid
 };
@@ -33,11 +34,11 @@ struct page_table* page_table_create(void);
 struct page* page_create(vaddr_t vaddr, paddr_t paddr);
 int page_exist(struct page_table* pgtbl, vaddr_t vaddr);
 void page_table_add(struct page_table* pgtbl, vaddr_t vaddr, paddr_t paddr);	
-void change_page_valid(struct page_table* pgtbl, vaddr_t vaddr, int validBit);
 paddr_t get_paddr(struct page_table* pgtbl, vaddr_t vaddr);
 
+void change_page_valid(struct page_table* pgtbl, vaddr_t vaddr, int validBit);
 // TOM adds these functions
-void page_invalid(struct page_table* pgtbl, paddr_t pa);
+void page_invalid(struct page_table* pgtbl, paddr_t pa, int order);
 void page_table_destroy(struct page_table* pt);
 #endif
 //#endif
