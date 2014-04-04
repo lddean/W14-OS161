@@ -20,6 +20,7 @@
 
 #include <kern/errno.h>
 #include <vm.h>
+#include <uw-vmstats.h>
 /* under dumbvm, always have 48k of user stack */
 #define DUMBVM_STACKPAGES    12
 
@@ -34,9 +35,10 @@ bool boot=false;
 void
 vm_bootstrap(void)
 {
-kprintf("swap init\n");
+//kprintf("swap init\n");
+    vmstats_init();
 	swap_init();
-kprintf("coremap init\n");
+//kprintf("coremap init\n");
 	coremap_init();
 	boot = true;
 	/* Do nothing. */
@@ -179,6 +181,11 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
             kprintf("ELF: short read on segment - file truncated?\n");
             return ENOEXEC;
         }
+        
+        vmstats_inc(VMSTAT_PAGE_FAULT_DISK);
+        vmstats_inc(VMSTAT_ELF_FILE_READ);
+    }else{
+        vmstats_inc(VMSTAT_PAGE_FAULT_ZERO);
     }
     
     check ++;
@@ -214,6 +221,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
 int
 vm_fault(int faulttype, vaddr_t faultaddress)
 {
+    vmstats_inc(VMSTAT_TLB_FAULT);
 	//kprintf("Begin vm_fault\n");
 	vaddr_t vbase1, vtop1, vbase2, vtop2, stackbase, stacktop;
 	paddr_t paddr;
@@ -309,7 +317,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         
         paddr = getppages(1);
         
-        if ( faultaddress >= as -> as_vbase1 && faultaddress <= as -> as_vbase1 + as ->memsize1){
+        if (segment == 1){
            // segment=1;
             times = times + 1;
             offset = faultaddress - as -> as_vbase1 + as -> offset1;
@@ -324,7 +332,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
             }
         }
         
-        if(faultaddress >= as -> as_vbase2 && faultaddress <= as -> as_vbase2 + as ->memsize2){
+        if(segment == 2){
             
             times = times + 1;
             offset = faultaddress - as -> as_vbase2 + as -> offset2;
@@ -343,12 +351,14 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         page_table_add(as -> page_table, faultaddress, paddr);
         
         
-    }
+    }else{
     //kprintf("Begin3 vm_fault\n");
+        
+        vmstats_inc(VMSTAT_TLB_RELOAD);
 	
-    paddr = get_paddr(as->page_table, faultaddress);
+        paddr = get_paddr(as->page_table, faultaddress);
     
-	/* make sure it's page-aligned */
+	}/* make sure it's page-aligned */
 	KASSERT((paddr & PAGE_FRAME) == paddr);
     
 	/* Disable interrupts on this CPU while frobbing the TLB. */
@@ -369,6 +379,9 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		
 			elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 		}
+        
+        vmstats_inc(VMSTAT_TLB_FAULT_FREE);
+        
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
 		tlb_write(ehi, elo, i);
 		//kprintf("11111\n");
@@ -384,12 +397,14 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
     //elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
     if (segment == 1){
-    	kprintf("SEGMENT - TEXT2\n");
+    	//kprintf("SEGMENT - TEXT2\n");
 		elo = paddr;  //&(~TLBLO_DIRTY);
 	}
 	else{
 		elo = paddr | TLBLO_DIRTY;
 	}
+    vmstats_inc(VMSTAT_TLB_FAULT_REPLACE);
+    
     DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
     tlb_write(ehi, elo, victim_index);
     

@@ -16,6 +16,8 @@
  * assignment, this file is not included in your kernel!
  */
 #include <addrspace.h>
+#include <uw-vmstats.h>
+
 
 /* under dumbvm, always have 48k of user stack */
 #define DUMBVM_STACKPAGES    12
@@ -82,6 +84,8 @@ as_activate(void)
 	if (as == NULL) {
 		return;
 	}
+    
+    vmstats_inc(VMSTAT_TLB_INVALIDATE);
     
 	/* Disable interrupts on this CPU while frobbing the TLB. */
 	spl = splhigh();
