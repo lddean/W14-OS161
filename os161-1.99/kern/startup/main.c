@@ -49,6 +49,7 @@
 #include <syscall.h>
 #include <test.h>
 #include <version.h>
+#include <uw-vmstats.h>
 #include "autoconf.h"  // for pseudoconfig
 #include "opt-A0.h"
 
@@ -148,7 +149,7 @@ static
 void
 shutdown(void)
 {
-
+    vmstats_print();
 	kprintf("Shutting down.\n");
 	
 	vfs_clearbootfs();
