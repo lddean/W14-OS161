@@ -83,7 +83,6 @@
 int
 load_elf(struct vnode *v, vaddr_t *entrypoint)
 {
-kprintf("in the load_elf\n");
 	Elf_Ehdr eh;   /* Executable header */
 	Elf_Phdr ph;   /* "Program header" = segment header */
 	int result, i;
@@ -148,15 +147,10 @@ kprintf("in the load_elf\n");
 	 * to find where the phdr starts.
 	 */
 	 
-kprintf("eh.ephnum = %d\n", eh.e_phnum);
-kprintf("before the for loop\n");
 	for (i=0; i<eh.e_phnum; i++) {
-	kprintf("in the loop\n");
 		off_t offset = eh.e_phoff + i*eh.e_phentsize;
 		uio_kinit(&iov, &ku, &ph, sizeof(ph), offset, UIO_READ);
-kprintf("here 11\n");
 		result = VOP_READ(v, &ku);
-kprintf("here 22\n");
 		if (result) {
 			return result;
 		}
@@ -166,7 +160,6 @@ kprintf("here 22\n");
 			kprintf("ELF: short read on phdr - file truncated?\n");
 			return ENOEXEC;
 		}
-kprintf("here 33\n");
 		switch (ph.p_type) {
 		    case PT_NULL: /* skip */ continue;
 		    case PT_PHDR: /* skip */ continue;
@@ -177,23 +170,18 @@ kprintf("here 33\n");
 				ph.p_type);
 			return ENOEXEC;
 		}
-kprintf("here 44\n");       
         as -> vnode = v;
-kprintf("here 55\n");
 		result = as_define_region(as,
 					  ph.p_vaddr, ph.p_memsz,
                       ph.p_offset,ph.p_filesz,
 					  ph.p_flags & PF_R,
 					  ph.p_flags & PF_W,
 					  ph.p_flags & PF_X);
-kprintf("here 66\n");
 		if (result) {
 			return result;
 		}
 	}
-kprintf("end loop\n");
 	result = as_prepare_load(as);
-kprintf("end prepare_load\n");
 	if (result) {
 		return result;
 	}
@@ -240,7 +228,6 @@ kprintf("end prepare_load\n");
 //	if (result) {
 //		return result;
 //	}
-kprintf("here end the elf\n");
 	*entrypoint = eh.e_entry;
 
 	return 0;

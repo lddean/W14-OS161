@@ -102,7 +102,6 @@ cmd_progthread(void *ptr, unsigned long nargs)
 
 	strcpy(progname, args[0]);
 
-kprintf("enter runprogram in menu\n");
 	result = runprogram(progname,args, nargs);
 //	result = runprogram(progname);
 	if (result) {
@@ -130,7 +129,6 @@ static
 int
 common_prog(int nargs, char **args)
 {
-kprintf("enter the common_prog\n");
 	struct proc *proc;
 	int result;
 
@@ -141,16 +139,13 @@ kprintf("enter the common_prog\n");
 
 	/* Create a process for the new program to run in. */
 	proc = proc_create_runprogram(args[0] /* name */);
-	kprintf("after proc_create_runprogram\n");
 	if (proc == NULL) {
 		return ENOMEM;
 	}
-kprintf("before the fork\n");
 	result = thread_fork(args[0] /* thread name */,
 			proc /* new process */,
 			cmd_progthread /* thread function */,
 			args /* thread arg */, nargs /* thread arg */);
-kprintf("after the fork\n");
 	if (result) {
 		kprintf("thread_fork failed: %s\n", strerror(result));
 		proc_destroy(proc);
@@ -181,7 +176,6 @@ cmd_prog(int nargs, char **args)
 	/* drop the leading "p" */
 	args++;
 	nargs--;
-kprintf("in cmd_prog\n");
 	return common_prog(nargs, args);
 }
 

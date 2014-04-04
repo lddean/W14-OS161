@@ -80,7 +80,6 @@ as_activate(void)
 #ifdef UW
     /* Kernel threads don't have an address spaces to activate */
 #endif
-    //kprintf("clean the TLB!!!!!!!!!!\n");
 	if (as == NULL) {
 		return;
 	}
@@ -94,7 +93,6 @@ as_activate(void)
 		tlb_write(TLBHI_INVALID(i), TLBLO_INVALID(), i);
 	}
     
-    //kprintf("cleaned the TLB!!!!!!!!!!!\n");
     
 	splx(spl);
 }
@@ -110,9 +108,9 @@ as_define_region(struct addrspace *as, vaddr_t vaddr, size_t sz, off_t offset,
                  size_t filesize,
                  int readable, int writeable, int executable)
 {
-kprintf("begin define region\n");
 	size_t npages;
-    
+    	int count;
+	count = 0;
 	/* Align the region. First, the base... */
 	sz += vaddr & ~(vaddr_t)PAGE_FRAME;
 	vaddr &= PAGE_FRAME;
@@ -128,29 +126,39 @@ kprintf("begin define region\n");
 	(void)executable;
     
 	if (as->as_vbase1 == 0) {
+count ++;
 		as->as_vbase1 = vaddr;
+count ++;	
 		as->as_npages1 = npages;
-        as->offset1 = offset;
-        as->filesize1 = filesize;
-        as->memsize1 = sz;
-        kprintf("end defien region\n");
+count ++;
+        	as->offset1 = offset;
+count ++;
+        	as->filesize1 = filesize;
+count ++;
+        	as->memsize1 = sz;
 		return 0;
 	}
     
 	if (as->as_vbase2 == 0) {
+count ++;
 		as->as_vbase2 = vaddr;
+count ++;
 		as->as_npages2 = npages;
-        as->offset2 = offset;
-        as->filesize2 = filesize;
-        as->memsize2 = sz;
-kprintf("end defien region\n");
+count ++;
+ 	        as->offset2 = offset;
+count ++;
+      		as->filesize2 = filesize;
+        
+count ++;
+		as->memsize2 = sz;
 		return 0;
 	}
     
 	/*
 	 * Support for more than two regions is not available.
 	 */
-	kprintf("dumbvm: Warning: too many regions\n");
+
+//kprintf("the count number = %d\n", count);:q
 
 	return EUNIMP;
 }
@@ -179,9 +187,7 @@ as_prepare_load(struct addrspace *as)
 		return ENOMEM;
 	}
     */
-kprintf("here 11\n");
 	as->as_stackpbase = getppages(DUMBVM_STACKPAGES);
-kprintf("here 22\n");
 	if (as->as_stackpbase == 0) {
 		return ENOMEM;
 	}

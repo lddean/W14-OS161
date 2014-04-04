@@ -113,9 +113,9 @@ int tlb_get_rr_victim(){
 int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offset, vaddr_t vaddr, paddr_t paddr, size_t memsize, size_t filesize, int is_executable){
     
 	// ununsed for NOW !!!!
-    	(void) as;
+    (void) as;
 	(void) is_executable;
-
+    
     struct iovec iov;
     struct uio u;
     int result;
@@ -144,27 +144,27 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
     
     size_t need_resid = 0;
     
-    if (vaddr - vbase < filesize){
+    if ((vaddr - vbase < filesize) && (vaddr + PAGE_SIZE > vbase + filesize)){
+        
+        
+        need_resid = vbase - vaddr + filesize;
         
         check ++;
         
-        if (vaddr + PAGE_SIZE > vbase + filesize){
-            
-            u.uio_resid = vbase - vaddr + filesize;
-            
-            need_resid = vbase - vaddr + filesize;
-            
-            check ++;
-            
-        }else{
-            
-            u.uio_resid = PAGE_SIZE;
-            
-            need_resid = PAGE_SIZE;
-            
-            check ++;
-            
-        }
+    }else if((vaddr - vbase < filesize) && (vaddr + PAGE_SIZE <= vbase + filesize)) {
+        
+        
+        need_resid = PAGE_SIZE;
+        
+        check ++;
+    }else{
+        
+        need_resid = 0;
+    }
+    
+    if (need_resid !=0){
+        
+        u.uio_resid = need_resid;
         //kprintf("the vop_read in loading page\n");
         result = VOP_READ(v, &u);
         //kprintf("finished vop_read in loading page\n");
@@ -190,27 +190,6 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
     
     check ++;
     
-    //size_t fillamt;
-  /*  
-    need_resid = PAGE_SIZE - filesize;
-    
-    if (need_resid > 0) {
-        
-        check ++;
-        
-        DEBUG(DB_EXEC, "ELF: Zero-filling %lu more bytes\n",
-              (unsigned long) need_resid);
-        u.uio_resid += need_resid;
-        result = uiomovezeros(need_resid, &u);
-        
-        check ++;
-        
-        if (result){
-            return result;
-        }
-    }
-  */  
-    //kprintf("the check = %d\n", check);
     
     return 0;
     
@@ -414,4 +393,5 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	//splx(spl);
 	//return EFAULT;
 }
+
 

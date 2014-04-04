@@ -58,7 +58,6 @@
 int
 runprogram(char *progname, char **args,unsigned long argc)
 {
-    kprintf("enter run program\n");
 	struct addrspace *as;
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
@@ -88,7 +87,6 @@ runprogram(char *progname, char **args,unsigned long argc)
 	/* Load the executable. */
 	result = load_elf(v, &entrypoint);
 	
-	kprintf("after laod elf %d\n", as->as_vbase1);
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);
@@ -167,7 +165,6 @@ runprogram(char *progname, char **args,unsigned long argc)
 		stackptr = stackptr - stackptr % 8;
 
 	}
-    kprintf("enter_new_process in runprogram.c\n");
 	/* Warp to user mode. */
 	enter_new_process(count /*argc*/,  (userptr_t)n/*userspace addr of argv*/,
 			  stackptr, entrypoint);
