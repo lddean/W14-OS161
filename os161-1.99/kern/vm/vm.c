@@ -35,10 +35,8 @@ bool boot=false;
 void
 vm_bootstrap(void)
 {
-//kprintf("swap init\n");
     vmstats_init();
-	swap_init();
-//kprintf("coremap init\n");
+	//swap_init();
 	coremap_init();
 	boot = true;
 	/* Do nothing. */
@@ -48,22 +46,17 @@ paddr_t
 getppages(unsigned long npages)
 {
 
-//kprintf("in getppages\n");
 	if(!boot){
 	paddr_t addr;
     
 	spinlock_acquire(&stealmem_lock);
     
 	addr = ram_stealmem(npages);
-//kprintf("after ram-stealmem\n");
 	spinlock_release(&stealmem_lock);
 	return addr;
 	}else{
-	//kprintf("here else\n");
 		paddr_t addr;
-	//kprintf("before the alloc\n");
 		addr = coremap_alloc(npages);
-	//kprintf("after the alloc\n");
 		return addr;
 	}
 }
@@ -165,9 +158,7 @@ int loading_page(struct addrspace *as, vaddr_t vbase,struct vnode *v, off_t offs
     if (need_resid !=0){
         
         u.uio_resid = need_resid;
-        //kprintf("the vop_read in loading page\n");
         result = VOP_READ(v, &u);
-        //kprintf("finished vop_read in loading page\n");
         check ++;
         
         if (result) {
@@ -201,7 +192,6 @@ int
 vm_fault(int faulttype, vaddr_t faultaddress)
 {
     vmstats_inc(VMSTAT_TLB_FAULT);
-	//kprintf("Begin vm_fault\n");
 	vaddr_t vbase1, vtop1, vbase2, vtop2, stackbase, stacktop;
 	paddr_t paddr;
 	int i;
@@ -221,7 +211,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	    case VM_FAULT_READONLY:
             /* We always create pages read-write, so we can't get this */
             //panic("DUMBVM!!!!!!!!!!!!!!!!!!!!!!!!!!!!: got VM_FAULT_READONLY\n");
-            kprintf("VM_FAULT_READONLY\n");
             return EFAULT;
 	    case VM_FAULT_READ:
 	    case VM_FAULT_WRITE:
@@ -331,7 +320,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         
         
     }else{
-    //kprintf("Begin3 vm_fault\n");
         
         vmstats_inc(VMSTAT_TLB_RELOAD);
 	
@@ -342,7 +330,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
 	/* Disable interrupts on this CPU while frobbing the TLB. */
 	spl = splhigh();
-   	//kprintf("check TLB\n"); 
 	for (i=0; i<NUM_TLB; i++) {
 		tlb_read(&ehi, &elo, i);
 		if (elo & TLBLO_VALID) {
@@ -351,7 +338,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		ehi = faultaddress;
 		//elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 		if (segment == 1){
-			//kprintf("SEGMENT - TEXT1\n");
 			elo = (paddr | TLBLO_VALID); //&(~TLBLO_DIRTY);
 		}
 		else{
@@ -363,9 +349,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
         
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
 		tlb_write(ehi, elo, i);
-		//kprintf("11111\n");
 		splx(spl);
-		//kprintf("22222\n");
 		return 0;
 	}
     int victim_index = tlb_get_rr_victim();
@@ -376,11 +360,10 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
     //elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
     if (segment == 1){
-    	//kprintf("SEGMENT - TEXT2\n");
-		elo = paddr;  //&(~TLBLO_DIRTY);
+		elo = paddr | TLBLO_VALID;  //&(~TLBLO_DIRTY);
 	}
 	else{
-		elo = paddr | TLBLO_DIRTY;
+		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 	}
     vmstats_inc(VMSTAT_TLB_FAULT_REPLACE);
     
@@ -389,9 +372,6 @@ vm_fault(int faulttype, vaddr_t faultaddress)
     
     splx(spl);
     return 0;
-	//kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
-	//splx(spl);
-	//return EFAULT;
 }
 
 

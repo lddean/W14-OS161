@@ -101,6 +101,7 @@ paddr_t coremap_occupy_pages(int index, int npages){
                 current->length = npages;
 	}
 	struct core_page* valid = pages+index;
+        bzero((void *)PADDR_TO_KVADDR(valid->pa), npages * PAGE_SIZE);
 
 	return valid->pa;
 }
@@ -141,7 +142,6 @@ paddr_t coremap_occupy_victim(int npages){
 	int start = coremap_get_victim();
 	int i=start;
 	while(i < start+npages){
-		//kprintf("in while %d\n", i);
 		struct core_page* current = pages+i;
 
 		// it is diry(swpped before), so call helper then continue
@@ -153,7 +153,6 @@ paddr_t coremap_occupy_victim(int npages){
 			//coremap_swap_out(i, npages);
 			//i = i+npages;
 		}else if(current->state == 1){
-		    //kprintf("occupy available as\n");
        	         	current->as = curproc_getas();
                 	current->length = npages;
                 	//current->order += 1;
@@ -171,7 +170,6 @@ paddr_t coremap_occupy_victim(int npages){
 // allocate n pages in physical memory
 paddr_t coremap_alloc(int n){
 	lock_acquire(corelock);	
-//kprintf("coremap alloc\n");
 	int i=0;
 	while(i < page_size){
 		if(!coremap_check_pages(i, n)){
@@ -187,7 +185,6 @@ paddr_t coremap_alloc(int n){
 		}else{
 			paddr_t rt = coremap_occupy_pages(i,n);
 
-	//kprintf("you want %d and give %d &  page limit %d & give you %p\n", n, i, page_size, (void*)rt);
 			lock_release(corelock);
 			return rt;
 		}
@@ -210,14 +207,13 @@ void coremap_free(vaddr_t addr){
 		start++;
                 current = pages + start;
 		if(start == page_size){
-			//kprintf("cannot find freed page\n");
+			kprintf("cannot find freed page\n");
 		}
 	}
 
 
  	//use START point to free LENGTH memories	
 	int length = current->length;
-//kprintf("!!!! free start %d & length %d\n", start, length);
 	for(int i=start; i<start + length; i++){
 		current = pages+i;
 		current->as = NULL;
